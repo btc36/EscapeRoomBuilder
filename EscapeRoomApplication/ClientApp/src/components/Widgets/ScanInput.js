@@ -1,16 +1,11 @@
 ﻿import React, { Component } from 'react';
 
-export class PageLink extends Component {
-
-    constructor(props) {
-        super(props);
-    }
+export class ScanInput extends Component {
 
     render() {
-      
         return (
             <div>
-              
+
             </div>
         );
     }

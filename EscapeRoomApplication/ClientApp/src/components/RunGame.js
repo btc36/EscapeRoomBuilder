@@ -10,7 +10,6 @@ export class RunGame extends Component {
   }
 
 
-
   render() {
     return (
       <div>

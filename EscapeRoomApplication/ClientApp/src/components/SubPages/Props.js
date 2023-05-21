@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 
-export class Puzzles extends Component {
+export class Props extends Component {
 
     constructor(props) {
         super(props);
@@ -13,7 +13,7 @@ export class Puzzles extends Component {
 
         return (
             <div>
-                <h3>Puzzles</h3>
+                <h3>Props</h3>
             </div>
         );
     }
