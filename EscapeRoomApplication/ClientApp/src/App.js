@@ -11,25 +11,176 @@ import { Media } from './components/SubPages/Media';
 import { Props } from './components/SubPages/Props';
 import { Puzzles } from './components/SubPages/Puzzles';
 import { Stages } from './components/SubPages/Stages';
+import { FrontEndDAO } from  './FrontEndDAO'
 
 import './escape-room-builder.css'
 
 export default class App extends Component {
-  static displayName = App.name;
+    static displayName = App.name;
+    constructor(props) {
+        super(props);
+        this.state = {
+            userId: 'btc36',
+            userName: 'Ben Cookson',
+            gameId: ''
+        };
+        this.setGameId = this.setGameId.bind(this);
+        this.makeRESTCall = this.makeRESTCall.bind(this);
+        this.FrontEndDAO = new FrontEndDAO();
+        console.log(this.FrontEndDAO);
+        console.log("HERE",this.FrontEndDAO.getExistingGames(this.state.userId));
+    }
+
+    setGameId(gameId) {
+        this.setState({
+            gameId: gameId
+        })
+    }
+
+    async getDatabaseData() {
+
+    }
+
+    async setDatabaseData() {
+
+    }
+
+    async makeRESTCall(URL, method, body, responseFunction, errorFunction, finalFunction) {
+        var fetchParameters = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        }
+        if (body) {
+            fetchParameters.body = JSON.stringify(body);
+        }
+        await fetch(URL, fetchParameters).then(response => {
+            if (!response.ok) {
+                console.log("ERROR:", response);
+                if (response.status == 401) {
+                    return Promise.reject("Unauthorized");
+                }
+                else {
+                    return Promise.reject("Unknown Error - Please contact I.T.");
+                }
+            }
+            else {
+                return response.json();
+            }
+        }).then((responseInfo) => {
+            return responseFunction(responseInfo);
+        }).catch((error) => {
+            if (error == "Unauthorized") {
+                console.log("UNATHORIZED");
+                alert("Session Timeout: Your session has timed out and you will need to log in again");
+                this.logout();
+                //Log them out, they are unauthorized
+            }
+            else if (error.message == "Failed to fetch") {
+                errorFunction("Unknown Error", "There was an Network error. Check your internet connection and try again");
+            } else {
+                errorFunction("Unknown Error", error);
+            }
+        }).finally(() => {
+            finalFunction();
+        });
+    }
 
   render () {
     return (
       <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/build-game' component={BuildGame} />
-        <Route path='/run-game' component={RunGame} />
-        <Route path='/games' component={Games} />
-        <Route path='/items' component={Items} />
-        <Route path='/locks' component={Locks} />
-        <Route path='/media' component={Media} />
-        <Route path='/props' component={Props} />
-        <Route path='/puzzles' component={Puzzles} />
-        <Route path='/stages' component={Stages} />
+        <Route exact path='/' component={() => (
+                <Home
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/build-game' component={() => (
+                <BuildGame
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/run-game' component={() => (
+                <RunGame
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/games' component={() => (
+                <Games
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/items' component={() => (
+                <Items
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/locks' component={() => (
+                <Locks
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/media' component={() => (
+                <Media
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/props' component={() => (
+                <Props
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/puzzles' component={() => (
+                <Puzzles
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
+        <Route path='/stages' component={() => (
+                <Stages
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                />
+            )}
+        />
       </Layout>
     );
   }
