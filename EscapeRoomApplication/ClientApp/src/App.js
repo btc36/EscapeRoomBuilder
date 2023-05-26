@@ -26,23 +26,14 @@ export default class App extends Component {
         };
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
-        this.FrontEndDAO = new FrontEndDAO();
-        console.log(this.FrontEndDAO);
-        console.log("HERE",this.FrontEndDAO.getExistingGames(this.state.userId));
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall);
     }
+
 
     setGameId(gameId) {
         this.setState({
             gameId: gameId
         })
-    }
-
-    async getDatabaseData() {
-
-    }
-
-    async setDatabaseData() {
-
     }
 
     async makeRESTCall(URL, method, body, responseFunction, errorFunction, finalFunction) {
@@ -97,6 +88,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -106,6 +98,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -115,6 +108,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -124,6 +118,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -133,6 +128,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -142,6 +138,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -151,6 +148,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -160,6 +158,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -169,6 +168,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
@@ -178,6 +178,7 @@ export default class App extends Component {
                     userName={this.state.userName}
                     gameId={this.state.gameId}
                     makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
                 />
             )}
         />
