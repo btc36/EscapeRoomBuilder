@@ -6,7 +6,7 @@ namespace EscapeRoomApplication
     {
         public MySqlConnection getConnection()
         {
-            string connectionString = "server=127.0.0.1;port=3306;database=EscapeRoom;uid=root;password=cooksben001";
+            string connectionString = "server=127.0.0.1;port=3306;database=escaperoomdb;uid=root;password=cooksben001";
             MySqlConnection connection = new MySqlConnection(connectionString);
             return connection;
         }
