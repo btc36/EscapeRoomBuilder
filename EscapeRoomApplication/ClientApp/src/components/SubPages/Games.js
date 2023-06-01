@@ -12,7 +12,7 @@ export class Games extends Component {
     }
 
     async runTest() {
-        console.log("HERE", await this.props.FrontEndDAO.getExistingGames(this.props.userId));
+        console.log("HERE", await this.props.FrontEndDAO.getUsers());
     }
 
     render() {

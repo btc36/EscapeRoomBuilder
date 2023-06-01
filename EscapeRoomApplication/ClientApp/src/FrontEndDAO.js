@@ -4,13 +4,14 @@ export class FrontEndDAO {
 
     constructor(makeRESTCall) {
         this.makeRESTCall = makeRESTCall;
-        this.getExistingGames = this.getExistingGames.bind(this);
+        this.getUsers = this.getUsers.bind(this);
     }
 
-    async getExistingGames(userId) {
+    async getUsers(userId) {
         var myExistingGamesInfo;
+        var parameters = {};
         await this.makeRESTCall(
-            'escaperoomdao',
+            'escaperoomdao?methodName=getUsers&parameters=' + JSON.stringify(parameters),
             'get',
             null,
             (existingGamesInfo) => {

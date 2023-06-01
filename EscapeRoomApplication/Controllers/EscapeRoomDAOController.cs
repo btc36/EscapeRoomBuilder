@@ -22,11 +22,11 @@ namespace EscapeRoomApplication.Controllers
         }
 
         [HttpGet]
-        public string Get()
+        public DAOResponseObject Get(string methodName, string parameters)
         {
-            string result = EscapeRoomDAO.sampleFunction("TEST");
-            TestObject test = new TestObject(result);
-            return JsonConvert.SerializeObject(test);
+            DAOParametersObject DAOParameters = JsonConvert.DeserializeObject<DAOParametersObject>(parameters);
+            DAOResponseObject DAOResponse = EscapeRoomDAO.MakeDatabaseCall(methodName, DAOParameters);
+            return DAOResponse;
         }
     }
 }
