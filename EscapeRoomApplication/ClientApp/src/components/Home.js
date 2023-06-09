@@ -4,6 +4,13 @@ import { PageLink } from './SubComponents/PageLink';
 export class Home extends Component {
     static displayName = Home.name;
 
+    constructor(props) {
+        super(props);
+        if (this.props.gameId) {
+            this.props.setGameId("")
+        }
+    }
+
   render () {
     return (
         <div>

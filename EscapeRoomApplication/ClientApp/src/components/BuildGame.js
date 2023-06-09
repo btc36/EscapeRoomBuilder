@@ -1,21 +1,49 @@
 import React, { Component } from 'react';
+import { BuildGameMenu } from './SubComponents/BuildGame/BuildGameMenu';
+import { CreateNewGame } from './SubComponents/BuildGame/CreateNewGame';
 
 export class BuildGame extends Component {
 
   constructor(props) {
     super(props);
       this.state = {
+          gameName: "",
+          gameDescription: ""
       };
-  }
+      this.updateStateInputValue = this.updateStateInputValue.bind(this);
+      this.addNewGame = this.addNewGame.bind(this);
+    }
 
-  componentDidMount() {
-  }
+    updateStateInputValue(e, stateValue) {
+        console.log(e);
+        var inputObject = {}
+        inputObject[stateValue] = e.target.value;
+        this.setState(inputObject)
+    }
+
+    addNewGame() {
+        var gameName = this.state.gameName;
+        var gameDescription = this.state.gameDescription;
+        if (!gameName || !gameDescription) {
+            alert("Please enter a game name and game description");
+        }
+        var newGameId = this.props.FrontEndDAO.addGame(this.props.userId, gameName, gameDescription);
+        this.props.setGameId(newGameId,gameName);
+    }
+
 
   render() {
     return (
-      <div>
-        <h1>Build Game</h1>
-      </div>
+        this.props.gameId
+            ?
+            <BuildGameMenu/>
+            :
+            <CreateNewGame
+                gameName={this.state.gameName}
+                gameDescription={this.state.gameDescription}
+                updateStateInputValue={this.updateStateInputValue}
+                addNewGame={this.addNewGame}
+            />
     );
   }
 }

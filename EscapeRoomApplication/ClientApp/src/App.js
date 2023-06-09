@@ -20,19 +20,23 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: 'btc36',
+            userId: '1',
             userName: 'Ben Cookson',
-            gameId: ''
+            gameId: '',
+            gameName: '',
+            games: []
         };
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
-        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall);
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall,this.state.userId);
     }
 
 
-    setGameId(gameId) {
+    setGameId(gameId,gameName, games=[]) {
         this.setState({
-            gameId: gameId
+            gameId: gameId,
+            gameName: gameName,
+            games: games
         })
     }
 
@@ -81,12 +85,15 @@ export default class App extends Component {
 
   render () {
     return (
-      <Layout>
+        <Layout
+            gameName={this.state.gameName}
+        >
         <Route exact path='/' component={() => (
                 <Home
                     userId={this.state.userId}
                     userName={this.state.userName}
                     gameId={this.state.gameId}
+                    setGameId={this.setGameId}
                     makeRESTCall={this.makeRESTCall}
                     FrontEndDAO={this.FrontEndDAO}
                 />
@@ -97,6 +104,7 @@ export default class App extends Component {
                     userId={this.state.userId}
                     userName={this.state.userName}
                     gameId={this.state.gameId}
+                    setGameId={this.setGameId}
                     makeRESTCall={this.makeRESTCall}
                     FrontEndDAO={this.FrontEndDAO}
                 />
@@ -117,8 +125,10 @@ export default class App extends Component {
                     userId={this.state.userId}
                     userName={this.state.userName}
                     gameId={this.state.gameId}
+                    games={this.state.games}
                     makeRESTCall={this.makeRESTCall}
                     FrontEndDAO={this.FrontEndDAO}
+                    setGameId={this.setGameId}
                 />
             )}
         />

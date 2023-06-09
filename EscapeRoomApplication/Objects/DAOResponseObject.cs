@@ -28,6 +28,9 @@ namespace EscapeRoomApplication.Objects
         public List<PuzzleItem> PuzzleItems { get; set; }
         public List<Stage> Stages { get; set; }
         public List<User> Users { get; set; }
+        public long insertedId { get; set; }
+        public bool success { get; set; }
+        public string message { get; set; }
 
     }
 }
