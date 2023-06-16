@@ -15,7 +15,8 @@ export class Stages extends Component {
             actionDialog: false,
             isErrorMessage: false,
             editData: {},
-            loading: false
+            editing: true,
+            loading: false,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -66,11 +67,27 @@ export class Stages extends Component {
         this.setState({
             editData: editData
         });
-        setTimeout(this.editLineCallback);
+        if (this.state.editing) {
+            setTimeout(this.editLineCallback);
+        }
+        else {
+            setTimeout(this.addLine);
+        };
     }
 
     addLine() {
-
+        console.log("ADD LINE STATE", this.state);
+        this.setState({
+            showDialog: true,
+            dialogFullScreen: true,
+            actionDialog: true,
+            editing: false,
+            dialogContent: <DataEntry
+                editData={this.state.editData}
+                updateEditData={this.updateEditData}
+                submitLineEntry={this.submitLineEntry}
+            />
+        })
     }
 
     editLine(editData) {
@@ -78,7 +95,7 @@ export class Stages extends Component {
         this.setState({
             editData: editData
         })
-        setTimeout(this.editLineCallback, 100);
+        setTimeout(this.editLineCallback);
     }
 
     editLineCallback() {
@@ -86,34 +103,39 @@ export class Stages extends Component {
             showDialog: true,
             dialogFullScreen: true,
             actionDialog: true,
+            editing: true,
             dialogContent: <DataEntry
                 editData={this.state.editData}
-                update={true}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
             />
         })
     }
 
-    submitLineEntry(update) {
+    submitLineEntry() {
+        var editData = this.state.editData;
+        if (!editData.name || !editData.description) {
+            alert('You cannot have empty values');
+            return;
+        }
         this.startLoading();
-        setTimeout(() => { this.submitLineEntryCallback(update)})
+        setTimeout(this.submitLineEntryCallback)
     }
 
-    async submitLineEntryCallback(update) {
-        if (update) {
+    async submitLineEntryCallback() {
+        if (this.state.editing) {
             var updateResponse = await this.props.FrontEndDAO.updateStage(this.state.editData);
-            if (updateResponse.success) {
-                this.setState({
-                    stages: updateResponse.stages
-                })
-            }
-            else {
-                alert("THERE WAS AN ERROR")
-            }
         }
         else {
-
+            var updateResponse = await this.props.FrontEndDAO.addStage(this.state.editData);
+        }
+        if (updateResponse.success) {
+            this.setState({
+                stages: updateResponse.stages
+            })
+        }
+        else {
+            alert("THERE WAS AN ERROR")
         }
         this.setState({
             editData: {},
@@ -149,6 +171,7 @@ export class Stages extends Component {
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
                 <h3>Stages</h3>
+                <button onClick={this.addLine}>Add New Stage</button>
                 <div>
                     <table>
                         <thead>

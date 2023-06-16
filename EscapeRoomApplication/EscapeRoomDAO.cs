@@ -203,7 +203,7 @@ namespace EscapeRoomApplication
                     // Add parameters for the values to be inserted
                     command.Parameters.AddWithValue("@value1", parameters.name);
                     command.Parameters.AddWithValue("@value2", parameters.description);
-                    command.Parameters.AddWithValue("@value3", parameters.order);
+                    command.Parameters.AddWithValue("@value3",1);
                     command.Parameters.AddWithValue("@value4", parameters.gameId);
                     command.ExecuteNonQuery();
                     // Execute the insert command
@@ -217,6 +217,7 @@ namespace EscapeRoomApplication
                     else
                     {
                         myResponse.insertedId = lastInsertedId;
+                        myResponse = getStages(connection,parameters,myResponse);
                     }
 
                 }

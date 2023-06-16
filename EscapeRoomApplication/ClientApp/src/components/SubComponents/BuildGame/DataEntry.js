@@ -19,7 +19,7 @@ export class DataEntry extends Component {
                     <p>Description</p>
                     <textarea className="descriptionInput" value={this.props.editData.description} onChange={(e) => { this.props.updateEditData(e, 'description') }} type="text" rows="5" cols="60" name="description"></textarea>
                 </label>
-                <button onClick={() => { this.props.submitLineEntry(this.props.update) }}>Submit</button>
+                <button onClick={this.props.submitLineEntry}>Submit</button>
             </div>
         );
     }

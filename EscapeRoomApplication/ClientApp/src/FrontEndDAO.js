@@ -133,4 +133,29 @@ export class FrontEndDAO {
         );
         return updateStageInfo;
     }
+
+    async addStage(editData) {
+        var addStageInfo;
+        var parameters = {
+            gameId: this.gameId,
+            name: editData.name,
+            description: editData.description
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addStage&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addStageResponse) => {
+                console.log("Add Stage", addStageResponse);
+                addStageInfo = addStageResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addStageInfo;
+    }
 }
