@@ -15,6 +15,12 @@ namespace EscapeRoomApplication
             EscapeRoomDAOFunctions["getUsers"] = this.getUsers;
             EscapeRoomDAOFunctions["getGames"] = this.getGames;
             EscapeRoomDAOFunctions["addGame"] = this.addGame;
+            EscapeRoomDAOFunctions["getStages"] = this.getStages;
+            EscapeRoomDAOFunctions["addStage"] = this.addStage;
+            EscapeRoomDAOFunctions["updateStage"] = this.updateStage;
+            EscapeRoomDAOFunctions["getPuzzles"] = this.getPuzzles;
+            EscapeRoomDAOFunctions["addPuzzle"] = this.addPuzzle;
+            EscapeRoomDAOFunctions["updatePuzzle"] = this.updatePuzzle;
         }
         public MySqlConnection getConnection()
         {
@@ -49,7 +55,7 @@ namespace EscapeRoomApplication
         }
 
         //Eventually add password for logging in and creating new users
-        //I will start with an inherent user
+        //I will start with an default user
         public DAOResponseObject getUsers(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             string sqlQuery = "SELECT * FROM users";
@@ -72,6 +78,7 @@ namespace EscapeRoomApplication
             return myResponse;
         }
 
+        //GAME FUNCTIONS
         public DAOResponseObject getGames(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             string sqlQuery = "SELECT * FROM games";
@@ -96,7 +103,6 @@ namespace EscapeRoomApplication
             return myResponse;
         }
 
-        //update Game
         public DAOResponseObject updateGame(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             //DO I DO VALIDATION BEFORE, OR BY TABLE DEFINITIONS
@@ -156,37 +162,206 @@ namespace EscapeRoomApplication
             }
             return myResponse;
         }
-        //Add Game
-
-        //getItems
-        //addItem
-        //updateItem
-
-        //getLocks
-        //addLock
-        //updateLock
-
-        //getLockTypes
-        //addLockType
-        //updateLockType
-
-        //getProps
-        //addProp
-        //updateProp
-
-        //getPuzzles
-        //addPuzzle
-        //updatePuzzle
-
-        //getPuzzleItemLinks
-        //addPuzzleItemLink
-        //updatePuzzleItemLink
-
-        //getStages
+       
+        //STAGES FUNCTIONS
+        public DAOResponseObject getStages(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            string sqlQuery = "SELECT * FROM stages WHERE game = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.gameId);
+                // Execute the query and obtain a MySqlDataReader
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    // Loop through the rows returned by the query
+                    while (reader.Read())
+                    {
+                        // Access columns by name or index
+                        int stageId = reader.GetInt32("id_stages");
+                        string name = reader.GetString("name");
+                        string description = reader.GetString("description");
+                        int order = reader.GetInt32("stage_order");
+                        int gameId = reader.GetInt32("game");
+                        Stage stage = new Stage(stageId,name,description,order,gameId);
+                        myResponse.Stages.Add(stage);
+                    }
+                }
+            }
+            return myResponse;
+        }
         //addStage
+        public DAOResponseObject addStage(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            using (connection)
+            {
+                // Create a SQL query for the insert statement
+                string sqlQuery = "INSERT INTO stages (name,description, stage_order, game) VALUES (@value1, @value2, @value3, @value4)";
+
+                // Create a MySqlCommand object with the SQL query and connection
+                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                {
+                    // Add parameters for the values to be inserted
+                    command.Parameters.AddWithValue("@value1", parameters.name);
+                    command.Parameters.AddWithValue("@value2", parameters.description);
+                    command.Parameters.AddWithValue("@value3", parameters.order);
+                    command.Parameters.AddWithValue("@value4", parameters.gameId);
+                    command.ExecuteNonQuery();
+                    // Execute the insert command
+
+                    long lastInsertedId = command.LastInsertedId;
+                    if (lastInsertedId == null)
+                    {
+                        myResponse.success = false;
+                        myResponse.message = "Failure to insert into the table";
+                    }
+                    else
+                    {
+                        myResponse.insertedId = lastInsertedId;
+                    }
+
+                }
+            }
+            return myResponse;
+        }
+
         //updateStage
+        public DAOResponseObject updateStage(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            string sqlQuery = "";
+            //DO I DO VALIDATION BEFORE, OR BY TABLE DEFINITIONS
+            if (parameters.remove)
+            {
+               sqlQuery = "DELETE from stages WHERE id_stages = @value1";
+            }
+            else
+            {
+                sqlQuery = "UPDATE stages SET name = @value2, stage_order = @value3, description = @value4 WHERE id_stages = @value1";
 
+            }
+            
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.stageId);
+                if (!parameters.remove)
+                {
+                    command.Parameters.AddWithValue("@value2", parameters.name);
+                    command.Parameters.AddWithValue("@value3", 1);//Lets worry about order later
+                    command.Parameters.AddWithValue("@value4", parameters.description);
+                }
+                try
+                {
+                    command.ExecuteNonQuery();
+                    myResponse = getStages(connection,parameters,myResponse);
+                }
+                catch(Exception ex)
+                {
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table-" + ex.Message;
+                }
+                long lastInsertedId = command.LastInsertedId;
+            }
+            return myResponse;
+        }
 
-        //getRunGameData
+        //PUZZLE FUNCTIONS
+        public DAOResponseObject getPuzzles(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            string sqlQuery = "SELECT * FROM puzzles WHERE stage = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                // Execute the query and obtain a MySqlDataReader
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    command.Parameters.AddWithValue("@value1", parameters.stageId);
+                    // Loop through the rows returned by the query
+                    while (reader.Read())
+                    {
+                        // Access columns by name or index
+                        int puzzleId = reader.GetInt32("id_puzzles");
+                        string name = reader.GetString("name");
+                        string description = reader.GetString("description");
+                        int stageId = reader.GetInt32("stage");
+                        int lockId = reader.GetInt32("lock");
+                        Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId);
+                        myResponse.Puzzles.Add(puzzle);
+                    }
+                }
+            }
+            return myResponse;
+        }
+        //addStage
+        public DAOResponseObject addPuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            using (connection)
+            {
+                // Create a SQL query for the insert statement
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock) VALUES (@value1, @value2, @value3, @value4)";
+
+                // Create a MySqlCommand object with the SQL query and connection
+                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                {
+                    // Add parameters for the values to be inserted
+                    command.Parameters.AddWithValue("@value1", parameters.name);
+                    command.Parameters.AddWithValue("@value2", parameters.description);
+                    command.Parameters.AddWithValue("@value3", parameters.stageId);
+                    command.Parameters.AddWithValue("@value3", parameters.lockId);
+                    command.ExecuteNonQuery();
+                    // Execute the insert command
+
+                    long lastInsertedId = command.LastInsertedId;
+                    if (lastInsertedId == null)
+                    {
+                        myResponse.success = false;
+                        myResponse.message = "Failure to insert into the table";
+                    }
+                    else
+                    {
+                        myResponse.insertedId = lastInsertedId;
+                    }
+
+                }
+            }
+            return myResponse;
+        }
+
+        public DAOResponseObject updatePuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            string sqlQuery = "";
+            //DO I DO VALIDATION BEFORE, OR BY TABLE DEFINITIONS
+            if (parameters.remove)
+            {
+                sqlQuery = "DELETE from puzzles WHERE id_puzzles = @value1";
+            }
+            else
+            {
+                sqlQuery = "UPDATE puzzles" +
+                    "SET name=@value2,description=@value3,stage=@value4,lock=@value5 " +
+                    "WHERE id_puzzles = @value1";
+
+            }
+
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.puzzleId);
+                if (!parameters.remove)
+                {
+                    command.Parameters.AddWithValue("@value2", parameters.name);
+                    command.Parameters.AddWithValue("@value3", parameters.description);
+                    command.Parameters.AddWithValue("@value3", parameters.stageId);
+                    command.Parameters.AddWithValue("@value3", parameters.lockId);
+                }
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table-" + ex.Message;
+                }
+            }
+            return myResponse;
+        }
+
     }
 }

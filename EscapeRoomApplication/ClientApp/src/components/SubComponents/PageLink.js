@@ -10,10 +10,19 @@ export class PageLink extends Component {
     }
 
     render() {
-      
+        var parameters = this.props.parameters ? this.props.parameters : {};
         return (
             <div>
-                <NavLink tag={Link} className="text-dark" to={"/" + this.props.linkURL}>{this.props.linkText}</NavLink>
+                <NavLink
+                    tag={Link}
+                    className="text-dark"
+                    to={{
+                        pathname: "/" + this.props.linkURL,
+                        state: parameters
+                    }}
+                >
+                    {this.props.linkText}
+                </NavLink>
             </div>
         );
     }

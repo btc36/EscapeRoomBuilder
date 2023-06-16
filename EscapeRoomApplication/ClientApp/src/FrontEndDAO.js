@@ -2,11 +2,14 @@
 
 export class FrontEndDAO {
 
-    constructor(makeRESTCall, userId) {
+    constructor(makeRESTCall, userId, gameId) {
         this.makeRESTCall = makeRESTCall;
         this.userId = userId;
+        this.gameId = gameId;
         this.getUsers = this.getUsers.bind(this);
         this.getGames = this.getGames.bind(this);
+        this.getStages = this.getStages.bind(this);
+        this.updateStage = this.updateStage.bind(this);
     }
 
     async getUsers(userId) {
@@ -81,4 +84,53 @@ export class FrontEndDAO {
         return addGameInfo;
     }
 
+    async getStages() {
+        var getStagesInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getStages&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getStagesResponse) => {
+                console.log("TESTING STAGES", getStagesResponse);
+                getStagesInfo = getStagesResponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getStagesInfo;
+    }
+
+    async updateStage(editData) {
+        var updateStageInfo;
+        var parameters = {
+            gameId: this.gameId,
+            stageId: editData.lineId,
+            name: editData.name,
+            description: editData.description
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateStage&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updateStageResponse) => {
+                console.log("Update Stage", updateStageResponse);
+                updateStageInfo = updateStageResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updateStageInfo;
+    }
 }

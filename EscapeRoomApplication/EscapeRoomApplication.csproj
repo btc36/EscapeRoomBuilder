@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\components\SubComponents\BuildGame\" />
     <Folder Include="ClientApp\src\components\SubComponents\RunGame\" />
   </ItemGroup>
 

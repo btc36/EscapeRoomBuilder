@@ -22,13 +22,13 @@ export default class App extends Component {
         this.state = {
             userId: '1',
             userName: 'Ben Cookson',
-            gameId: '',
-            gameName: '',
+            gameId: '1',
+            gameName: 'Nuclear Reactor',
             games: []
         };
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
-        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall,this.state.userId);
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall,this.state.userId,this.state.gameId);
     }
 
 

@@ -12,14 +12,16 @@ export class DialogMessage extends React.Component {
     }
 
     render() {
+        console.log("DIALOG PROPS", this.props);
         return (
             <Dialog
-                className={this.props.isErrorMessage ? "errorMessage" : this.props.dialogFullScreen ? "fullscreen" : ""}
+                className={this.props.isErrorMessage ? "errorMessage" : ""}
                 dialogFullScreen={this.props.dialogFullScreen}
                 onClose={this.props.closeDialog}
                 aria-labelledby="customized-dialog-title"
                 open={this.props.showDialog}
                 disableEscapeKeyDown={this.props.actionDialog}
+                fullScreen={this.props.dialogFullScreen}
             >
                 <DialogTitle id="customized-dialog-title" onClose={this.props.closeDialog}>
                     {this.props.dialogTitle}

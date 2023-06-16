@@ -16,6 +16,7 @@ namespace EscapeRoomApplication.Objects
             this.PuzzleItems = new List<PuzzleItem>();
             this.Stages = new List<Stage>();
             this.Users = new List<User>();
+            this.success = true;
         }
 
         public List<Clue> Clues { get; set; }

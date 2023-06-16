@@ -29,12 +29,8 @@ export class BuildGameMenu extends Component {
                         linkText={"Props/Locations"}
                     /></button>
                     <button> <PageLink
-                        linkURL={"play-game"}
-                        linkText={"Play"}
-                    /></button>
-                    <button> <PageLink
                         linkURL={"Locks"}
-                        linkText={"locks"}
+                        linkText={"Locks"}
                     /></button>
                 </div>
             </div>
