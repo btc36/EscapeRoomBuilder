@@ -10,6 +10,7 @@ export class FrontEndDAO {
         this.getGames = this.getGames.bind(this);
         this.getStages = this.getStages.bind(this);
         this.updateStage = this.updateStage.bind(this);
+        this.removeStage = this.removeStage.bind(this);
     }
 
     async getUsers(userId) {
@@ -157,5 +158,30 @@ export class FrontEndDAO {
             }
         );
         return addStageInfo;
+    }
+
+    async removeStage(stageId) {
+        var removeStageInfo;
+        var parameters = {
+            gameId: this.gameId,
+            stageId: stageId,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateStage&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removeStageResponse) => {
+                console.log("Remove Stage", removeStageResponse);
+                removeStageInfo = removeStageResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removeStageInfo;
     }
 }

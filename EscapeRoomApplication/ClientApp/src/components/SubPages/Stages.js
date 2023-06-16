@@ -1,7 +1,10 @@
 ﻿import React, { Component } from 'react';
+import { FrontEndDAO } from '../../FrontEndDAO';
 import { DataEntry } from '../SubComponents/BuildGame/DataEntry';
 import { DialogMessage } from '../Widgets/DialogMessage';
 import { Loader } from '../Widgets/Loader';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 export class Stages extends Component {
 
@@ -20,10 +23,13 @@ export class Stages extends Component {
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
+        this.showConfirm = this.showConfirm.bind(this);
         this.getStages = this.getStages.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
         this.updateEditData = this.updateEditData.bind(this);
         this.addLine = this.addLine.bind(this);
+        this.removeLineConfirm = this.removeLineConfirm.bind(this);
+        this.removeLine = this.removeLine.bind(this);
         this.editLine = this.editLine.bind(this);
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
@@ -43,6 +49,35 @@ export class Stages extends Component {
         this.setState({
             loading: false
         })
+    }
+
+    showConfirm(title, message, buttonTextPositive, buttonTextNegative, positiveFunction, negativeFunction, hideSubmit = false) {
+        var buttons = [{
+            label: buttonTextNegative,
+            onClick: negativeFunction
+        }];
+        if (!hideSubmit) {
+            buttons.push({
+                label: buttonTextPositive,
+                onClick: positiveFunction
+            });
+        }
+
+        const options = {
+            title: title,
+            message: message,
+            buttons: buttons,
+            childrenElement: () => <div />,
+            closeOnEscape: false,
+            closeOnClickOutside: false,
+            willUnmount: () => { },
+            afterClose: () => { },
+            onClickOutside: () => { },
+            onKeypressEscape: () => { },
+            overlayClassName: "confirm-message"
+        };
+
+        confirmAlert(options);
     }
 
     async getStages() {
@@ -88,6 +123,29 @@ export class Stages extends Component {
                 submitLineEntry={this.submitLineEntry}
             />
         })
+    }
+
+    removeLineConfirm(removeData) {
+            this.showConfirm(
+                "Remove Stage",
+                "Are you sure you want to remove " + removeData.name + "? This cannot be reversed",
+                "Remove Stage",
+                "Just Kidding",
+                () => {this.removeLine(removeData)},
+                () => {}
+            );
+    }
+
+    async removeLine(removeData){
+        var removelineReponse = await this.props.FrontEndDAO.removeStage(removeData.lineId);
+        if (removelineReponse.success) {
+            this.setState({
+                stages: removelineReponse.stages
+            })
+        }
+        else {
+            alert("THERE HAS BEEN AN ERROR");
+        }
     }
 
     editLine(editData) {
@@ -154,6 +212,7 @@ export class Stages extends Component {
     render() {
         console.log("STAGE STATE", this.state);
         var editLineFunction = this.editLine;
+        var removeLineFunction = this.removeLineConfirm;
         return (
             <div>
                 {
@@ -178,7 +237,6 @@ export class Stages extends Component {
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
-                                <td>Edit</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -197,6 +255,12 @@ export class Stages extends Component {
                                                     additionalSelections: {}
                                                 })
                                             }}>EDIT</button></td>
+                                            <td><button onClick={() => {
+                                                removeLineFunction({
+                                                    name: stage.name,
+                                                    lineId: stage.id_stages
+                                                })
+                                            }}>REMOVE</button></td>
                                         </tr>
                                     )
                                 })

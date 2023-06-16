@@ -11,7 +11,7 @@ import { Media } from './components/SubPages/Media';
 import { Props } from './components/SubPages/Props';
 import { Puzzles } from './components/SubPages/Puzzles';
 import { Stages } from './components/SubPages/Stages';
-import { FrontEndDAO } from  './FrontEndDAO'
+import { FrontEndDAO } from './FrontEndDAO';
 
 import './escape-room-builder.css'
 
