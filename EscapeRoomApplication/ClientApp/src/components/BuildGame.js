@@ -15,7 +15,6 @@ export class BuildGame extends Component {
     }
 
     updateStateInputValue(e, stateValue) {
-        console.log(e);
         var inputObject = {}
         inputObject[stateValue] = e.target.value;
         this.setState(inputObject)

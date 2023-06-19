@@ -7,12 +7,12 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { PageLink } from '../SubComponents/PageLink';
 
-export class Stages extends Component {
+export class LockTypes extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            stages: [],
+            lockTypes: [],
             showDialog: false,
             dialogTitle: "",
             dialogContent: "",
@@ -25,7 +25,7 @@ export class Stages extends Component {
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
         this.showConfirm = this.showConfirm.bind(this);
-        this.getStages = this.getStages.bind(this);
+        this.getLockTypes = this.getLockTypes.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
         this.updateEditData = this.updateEditData.bind(this);
         this.addLine = this.addLine.bind(this);
@@ -35,7 +35,7 @@ export class Stages extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
-        this.getStages();
+        this.getLockTypes();
     }
 
     startLoading() {
@@ -81,24 +81,23 @@ export class Stages extends Component {
         confirmAlert(options);
     }
 
-    async getStages() {
-        var gameInfo = await this.props.FrontEndDAO.getStages();
-        console.log("GAME INFO", gameInfo);
+    async getLockTypes() {
+        var gameInfo = await this.props.FrontEndDAO.getLockTypes();
         this.setState({
-            stages: gameInfo.stages
+            lockTypes: gameInfo.lockTypes
         })
     }
 
-    closeDialog(a,b) {
+    closeDialog(a, b) {
         this.setState({
             showDialog: false
         });
 
     }
 
-    updateEditData(e,inputName) {
+    updateEditData(e, inputName) {
         console.log("E", e);
-       var editData = this.state.editData;
+        var editData = this.state.editData;
         editData[inputName] = e.target.value;
         this.setState({
             editData: editData
@@ -127,25 +126,25 @@ export class Stages extends Component {
     }
 
     removeLineConfirm(removeData) {
-            this.showConfirm(
-                "Remove Stage",
-                "Are you sure you want to remove " + removeData.name + "? This cannot be reversed",
-                "Remove Stage",
-                "Just Kidding",
-                () => {this.removeLine(removeData)},
-                () => {}
-            );
+        this.showConfirm(
+            "Remove Lock Type",
+            "Are you sure you want to remove " + removeData.name + "? This cannot be reversed",
+            "Remove Lock Type",
+            "Just Kidding",
+            () => { this.removeLine(removeData) },
+            () => { }
+        );
     }
 
-    async removeLine(removeData){
-        var removelineReponse = await this.props.FrontEndDAO.removeStage(removeData.lineId);
+    async removeLine(removeData) {
+        var removelineReponse = await this.props.FrontEndDAO.removeLockType(removeData.lineId);
         if (removelineReponse.success) {
             this.setState({
-                stages: removelineReponse.stages
+                lockTypes: removelineReponse.lockTypes
             })
         }
         else {
-            alert("THERE HAS BEEN AN ERROR");
+            alert("THERE HAS BEEN AN ERROR", removelineReponse);
         }
     }
 
@@ -183,18 +182,19 @@ export class Stages extends Component {
 
     async submitLineEntryCallback() {
         if (this.state.editing) {
-            var updateResponse = await this.props.FrontEndDAO.updateStage(this.state.editData);
+            var updateResponse = await this.props.FrontEndDAO.updateLockType(this.state.editData);
         }
         else {
-            var updateResponse = await this.props.FrontEndDAO.addStage(this.state.editData);
+            var updateResponse = await this.props.FrontEndDAO.addLockType(this.state.editData);
         }
+        console.log("LOCK TYPES RESPONSE", updateResponse)
         if (updateResponse.success) {
             this.setState({
-                stages: updateResponse.stages
+                lockTypes: updateResponse.lockTypes
             })
         }
         else {
-            alert("THERE WAS AN ERROR")
+            alert("THERE WAS AN ERROR", updateResponse)
         }
         this.setState({
             editData: {},
@@ -211,7 +211,7 @@ export class Stages extends Component {
 
 
     render() {
-        console.log("STAGE STATE", this.state);
+        console.log("Lock TYPES STATE", this.state);
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
         return (
@@ -230,12 +230,12 @@ export class Stages extends Component {
                     isErrorMessage={this.state.isErrorMessage}
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
-                <h3>Stages</h3>
+                <h3>Lock Types</h3>
                 <button> <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
                 /></button>
-                <button onClick={this.addLine}>Add New Stage</button>
+                <button onClick={this.addLine}>Add New Lock Type</button>
                 <div>
                     <table>
                         <thead>
@@ -246,24 +246,24 @@ export class Stages extends Component {
                         </thead>
                         <tbody>
                             {
-                                this.state.stages.map(function (stage, idx) {
+                                this.state.lockTypes.map(function (lockType, idx) {
                                     return (
-                                        <tr key={stage.id_stages}>
-                                            <td>{stage.name}</td>
-                                            <td>{stage.description}</td>
+                                        <tr key={lockType.id_lock_types}>
+                                            <td>{lockType.name}</td>
+                                            <td>{lockType.description}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
-                                                    lineId: stage.id_stages,
-                                                    name: stage.name,
-                                                    description: stage.description,
+                                                    lineId: lockType.id_lock_types,
+                                                    name: lockType.name,
+                                                    description: lockType.description,
                                                     additionalInputs: {},
                                                     additionalSelections: {}
                                                 })
                                             }}>EDIT</button></td>
                                             <td><button onClick={() => {
                                                 removeLineFunction({
-                                                    name: stage.name,
-                                                    lineId: stage.id_stages
+                                                    name: lockType.name,
+                                                    lineId: lockType.id_lock_types
                                                 })
                                             }}>REMOVE</button></td>
                                         </tr>

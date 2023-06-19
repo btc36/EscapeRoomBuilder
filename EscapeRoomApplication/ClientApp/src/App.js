@@ -7,6 +7,7 @@ import { RunGame } from './components/RunGame';
 import { Games } from './components/SubPages/Games';
 import { Items } from './components/SubPages/Items';
 import { Locks } from './components/SubPages/Locks';
+import { LockTypes } from './components/SubPages/LockTypes';
 import { Media } from './components/SubPages/Media';
 import { Props } from './components/SubPages/Props';
 import { Puzzles } from './components/SubPages/Puzzles';
@@ -151,7 +152,17 @@ export default class App extends Component {
                     FrontEndDAO={this.FrontEndDAO}
                 />
             )}
-        />
+            />
+            <Route path='/lockTypes' component={() => (
+                <LockTypes
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    gameId={this.state.gameId}
+                    makeRESTCall={this.makeRESTCall}
+                    FrontEndDAO={this.FrontEndDAO}
+                />
+            )}
+            />
         <Route path='/media' component={() => (
                 <Media
                     userId={this.state.userId}
