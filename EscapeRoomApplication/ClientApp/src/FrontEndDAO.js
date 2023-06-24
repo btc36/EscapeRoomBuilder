@@ -20,6 +20,10 @@ export class FrontEndDAO {
         this.addLock = this.addLock.bind(this);
         this.updateLock = this.updateLock.bind(this);
         this.removeLock = this.removeLock.bind(this);
+        this.getPuzzles = this.getPuzzles.bind(this);
+        this.addPuzzle = this.addPuzzle.bind(this);
+        this.updatePuzzle = this.updatePuzzle.bind(this);
+        this.removePuzzle = this.removePuzzle.bind(this);
     }
 
     async getUsers(userId) {
@@ -398,5 +402,110 @@ export class FrontEndDAO {
             }
         );
         return removeLockInfo;
+    }
+
+    async getPuzzles() {
+        var getPuzzlesInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getPuzzles&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getPuzzlesReponse) => {
+                console.log("TESTING Puzzles", getPuzzlesReponse);
+                getPuzzlesInfo = getPuzzlesReponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getPuzzlesInfo;
+    }
+
+    async updatePuzzle(editData) {
+        var updatePuzzleInfo;
+        var parameters = {
+            gameId: this.gameId,
+            puzzleId: editData.lineId,
+            name: editData.name,
+            description: editData.description,
+            lockId: editData.additionalSelections.lock.value,
+            stageId: editData.additionalSelections.stage.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updatePuzzle&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updatePuzzleReponse) => {
+                console.log("Update Puzzle", updatePuzzleReponse);
+                updatePuzzleInfo = updatePuzzleReponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updatePuzzleInfo;
+    }
+
+    async addPuzzle(editData) {
+        var addPuzzleInfo;
+        console.log("ADD LOCK", editData)
+        var parameters = {
+            gameId: this.gameId,
+            name: editData.name,
+            description: editData.description,
+            lockId: editData.additionalSelections.lock.value,
+            stageId: editData.additionalSelections.stage.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addPuzzle&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addPuzzleResponse) => {
+                console.log("Add Puzzle", addPuzzleResponse);
+                addPuzzleInfo = addPuzzleResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addPuzzleInfo;
+    }
+
+    async removePuzzle(puzzleId) {
+        var removePuzzleInfo;
+        var parameters = {
+            gameId: this.gameId,
+            puzzleId: puzzleId,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updatePuzzle&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removePuzzleResponse) => {
+                console.log("Remove Puzzle Response", removePuzzleResponse);
+                removePuzzleInfo = removePuzzleResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removePuzzleInfo;
     }
 }

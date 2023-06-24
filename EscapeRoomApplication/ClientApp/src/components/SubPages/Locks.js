@@ -229,6 +229,7 @@ export class Locks extends Component {
                 additionalSelections: {
                     lockType: {
                         value: "",
+                        id: "id_lock_types",
                         selectionList: this.state.lockTypes
                     }
                 }
@@ -290,6 +291,7 @@ export class Locks extends Component {
                                     for (var i in lockTypes) {
                                         if (lockTypes[i].id_lock_types == lock.lock_type) {
                                             lockTypeName = lockTypes[i].name;
+                                            break;
                                         }
                                     }
                                     console.log("MY LOCK TYPE NAME", lockTypeName);

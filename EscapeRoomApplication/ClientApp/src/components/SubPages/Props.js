@@ -15,7 +15,7 @@ export class Props extends Component {
         return (
             <div>
                 <h3>Props</h3>
-                <button> <PageLink
+                 <button> <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
                 /></button>

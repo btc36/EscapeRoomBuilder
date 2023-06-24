@@ -273,11 +273,19 @@ namespace EscapeRoomApplication
         //PUZZLE FUNCTIONS
         public DAOResponseObject getPuzzles(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            string sqlQuery = "SELECT * FROM puzzles WHERE stage = @value1";
+
+            myResponse = getStages(connection, parameters, myResponse);
+            var stages = myResponse.Stages;
+            var stageIds = new List<long>();
+            for(var i = 0; i < stages.Count; i++)
+            {
+                var stage = stages[i];
+                stageIds.Add(stage.id_stages);
+            }
+            var stageIdList = String.Join(",", stageIds);
+            string sqlQuery = "SELECT * FROM puzzles WHERE stage IN (" + stageIdList + ")";
             using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
-
-                command.Parameters.AddWithValue("@value1", parameters.stageId);
                 // Execute the query and obtain a MySqlDataReader
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
@@ -289,21 +297,21 @@ namespace EscapeRoomApplication
                         string name = reader.GetString("name");
                         string description = reader.GetString("description");
                         int stageId = reader.GetInt32("stage");
-                        int lockId = reader.GetInt32("lock");
+                        int lockId = reader.GetInt32("lock_solved");
                         Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId);
                         myResponse.Puzzles.Add(puzzle);
                     }
                 }
+                myResponse = getLocks(connection, parameters, myResponse);
             }
             return myResponse;
         }
-        //addStage
         public DAOResponseObject addPuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             using (connection)
             {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock) VALUES (@value1, @value2, @value3, @value4)";
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved) VALUES (@value1, @value2, @value3, @value4)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
@@ -312,7 +320,7 @@ namespace EscapeRoomApplication
                     command.Parameters.AddWithValue("@value1", parameters.name);
                     command.Parameters.AddWithValue("@value2", parameters.description);
                     command.Parameters.AddWithValue("@value3", parameters.stageId);
-                    command.Parameters.AddWithValue("@value3", parameters.lockId);
+                    command.Parameters.AddWithValue("@value4", parameters.lockId);
                     command.ExecuteNonQuery();
                     // Execute the insert command
 
@@ -343,8 +351,8 @@ namespace EscapeRoomApplication
             }
             else
             {
-                sqlQuery = "UPDATE puzzles" +
-                    "SET name=@value2,description=@value3,stage=@value4,lock=@value5 " +
+                sqlQuery = "UPDATE puzzles " +
+                    "SET name=@value2,description=@value3,stage=@value4,lock_solved=@value5 " +
                     "WHERE id_puzzles = @value1";
 
             }
