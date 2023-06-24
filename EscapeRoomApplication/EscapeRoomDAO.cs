@@ -276,10 +276,11 @@ namespace EscapeRoomApplication
             string sqlQuery = "SELECT * FROM puzzles WHERE stage = @value1";
             using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
+
+                command.Parameters.AddWithValue("@value1", parameters.stageId);
                 // Execute the query and obtain a MySqlDataReader
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
-                    command.Parameters.AddWithValue("@value1", parameters.stageId);
                     // Loop through the rows returned by the query
                     while (reader.Read())
                     {
@@ -375,13 +376,14 @@ namespace EscapeRoomApplication
         //Lock FUNCTIONS
         public DAOResponseObject getLocks(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            string sqlQuery = "SELECT * FROM locks WHERE game = @gameId";
+            string sqlQuery = "SELECT * FROM locks WHERE game = @value1";
             using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
+
+                command.Parameters.AddWithValue("@value1", parameters.gameId);
                 // Execute the query and obtain a MySqlDataReader
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
-                    command.Parameters.AddWithValue("@value1", parameters.gameId);
                     // Loop through the rows returned by the query
                     while (reader.Read())
                     {
@@ -397,6 +399,7 @@ namespace EscapeRoomApplication
                     }
                 }
             }
+            myResponse = getLockTypes(connection, parameters, myResponse);
             return myResponse;
         }
         //addStage

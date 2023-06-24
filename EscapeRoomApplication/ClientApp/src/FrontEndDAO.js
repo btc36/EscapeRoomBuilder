@@ -16,6 +16,10 @@ export class FrontEndDAO {
         this.addLockType = this.addLockType.bind(this);
         this.updateLockType = this.updateLockType.bind(this);
         this.removeLockType = this.removeLockType.bind(this);
+        this.getLocks = this.getLocks.bind(this);
+        this.addLock = this.addLock.bind(this);
+        this.updateLock = this.updateLock.bind(this);
+        this.removeLock = this.removeLock.bind(this);
     }
 
     async getUsers(userId) {
@@ -288,5 +292,111 @@ export class FrontEndDAO {
             }
         );
         return removeLockTypeInfo;
+    }
+
+
+    async getLocks() {
+        var getLocksInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getLocks&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getLocksResponse) => {
+                console.log("TESTING Locks", getLocksResponse);
+                getLocksInfo = getLocksResponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getLocksInfo;
+    }
+
+    async updateLock(editData) {
+        var updateLockInfo;
+        var parameters = {
+            gameId: this.gameId,
+            lockId: editData.lineId,
+            name: editData.name,
+            description: editData.description,
+            combo: editData.additionalInputs.combo,
+            lockTypeId: editData.additionalSelections.lockType.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateLock&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updateLockReponse) => {
+                console.log("Update Lock", updateLockReponse);
+                updateLockInfo = updateLockReponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updateLockInfo;
+    }
+
+    async addLock(editData) {
+        var addLockInfo;
+        console.log("ADD LOCK",editData)
+        var parameters = {
+            gameId: this.gameId,
+            name: editData.name,
+            description: editData.description,
+            combo: editData.additionalInputs.combo,
+            lockTypeId: editData.additionalSelections.lockType.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addLock&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addLockResponse) => {
+                console.log("Add Lock", addLockResponse);
+                addLockInfo = addLockResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addLockInfo;
+    }
+
+    async removeLock(lockId) {
+        var removeLockInfo;
+        var parameters = {
+            gameId: this.gameId,
+            lockId: lockId,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateLock&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removeLockResponse) => {
+                console.log("Remove Lock Response", removeLockResponse);
+                removeLockInfo = removeLockResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removeLockInfo;
     }
 }
