@@ -1,4 +1,6 @@
-﻿namespace EscapeRoomApplication.Objects
+﻿using EscapeRoomApplication.Objects.Tables;
+
+namespace EscapeRoomApplication.Objects
 {
     public class DAOParametersObject
     {
@@ -17,5 +19,8 @@
         public string description { get; set; }
         public int order { get; set; }
         public string combo { get; set; }
+        public int parent { get; set; }
+        public List<int> puzzleItems { get; set; }
+        public PuzzleItem puzzleItem { get; set; }
     }
 }

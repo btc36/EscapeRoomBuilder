@@ -16,5 +16,6 @@
         public string description { get; set; }
         public int stage { get; set; }
         public int lock_solved { get; set; }
+        public int completion_code { get; set; }
     }
 }

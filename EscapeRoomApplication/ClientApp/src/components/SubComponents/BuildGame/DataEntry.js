@@ -1,16 +1,110 @@
 ﻿import React, { Component } from 'react';
+import Select from 'react-select'
 
 export class DataEntry extends Component {
 
     constructor(props) {
         super(props)
         console.log("DATA ENTRY PROPS", props);
+        this.translateDataToSelect = this.translateDataToSelect.bind(this);
+        this.translateDataFromSelect = this.translateDataFromSelect.bind(this);
+        this.getOptionName = this.getOptionName.bind(this);
+        this.getDefaultValue = this.getDefaultValue.bind(this);
+    }
+
+    translateDataToSelect(selectionList, selectId, defaultValues) {
+        console.log("selectionList", selectionList);
+        console.log("DEFAULT VALUE", defaultValues);
+        var translatedData = [];
+        var selectedValues = [];
+        if (defaultValues.length) {
+            for (var i in defaultValues) {
+                selectedValues.push(parseInt(defaultValues[i].value));
+            }
+        }
+        else {
+            selectedValues.push(parseInt(defaultValues.value));
+        }
+        for (var i in selectionList) {
+            var value = selectionList[i][selectId];
+            if (selectedValues.indexOf(value) > -1) {
+                //Dont give selected options as an option
+                continue;
+            }
+            translatedData.push({
+                label: selectionList[i].name,
+                value: value
+            })
+        }
+        return translatedData;
+    }
+
+    translateDataFromSelect(e,inputName) {
+        var inputType = "selection";
+        var value = e.value;
+        if (e.length) {
+            var values = []
+            for (var i in e) {
+                values.push(e[i].value);
+            }
+            value = values.join();
+        }
+        var selectEvent = {
+            target: {
+                value: value
+            }
+        }
+        this.props.updateEditData(selectEvent, inputName, inputType)
+    }
+
+    getOptionName(selectionList, value, selectId) {
+        console.log('GET OPTION NAME', selectionList, value, selectId);
+        var name = "N/A";
+        for (var i in selectionList) {
+            if (selectionList[i][selectId] == value) {
+                name = selectionList[i].name;
+                break;
+            }
+        }
+        return name;
+    }
+
+    getDefaultValue(selectInfo) {
+        console.log("SELECT INFO", selectInfo);
+        var valueArray = selectInfo.value ? selectInfo.value.toString().split(",") : [];
+        if (valueArray.length == 1) {
+            var label = "Select Option";
+            if (parseInt(selectInfo.value) > -1) {
+                return {
+                    value: selectInfo.value,
+                    label: this.getOptionName(selectInfo.selectionList, selectInfo.value, selectInfo.id)
+                }
+            }
+            else {
+                return []
+            }
+            
+        }
+        else {
+            var defaultValuesArray = [];
+            for (var i in valueArray) {
+                var label = this.getOptionName(selectInfo.selectionList, valueArray[i], selectInfo.id)
+                defaultValuesArray.push({
+                    value: valueArray[i],
+                    label: label
+                })
+            }
+            return defaultValuesArray;
+        }
     }
 
     render() {
         console.log("EDIT DATA", this.props.editData);
         var editData = this.props.editData;
         var updateEditDataFunction = this.props.updateEditData;
+        var translateDataToSelectFunction = this.translateDataToSelect;
+        var translateFromSelectFunction = this.translateDataFromSelect;
+        var getDefaultValueFunction = this.getDefaultValue;
         var extraInputs = editData.additionalInputs ? Object.keys(editData.additionalInputs) : [];
         var selectOptions = editData.additionalSelections ? Object.keys(editData.additionalSelections) : [];
         return (
@@ -38,20 +132,18 @@ export class DataEntry extends Component {
                         console.log("SELECT OPTION", editData.additionalSelections[selectOption])
                         var selectionList = editData.additionalSelections[selectOption].selectionList;
                         var selectId = editData.additionalSelections[selectOption].id;
+                        var defaultValue = getDefaultValueFunction(editData.additionalSelections[selectOption]);
                         return (
-                            <div>
-                                <p>{selectOption}</p>
-                                <select className="additionalSelect" value={editData.additionalSelections[selectOption].value} onChange={(e) => { updateEditDataFunction(e, selectOption,"selection") }}>
-                                    <option key={-1} defaultValue>-Select {selectOption}-</option>
-                                    {
-                                        selectionList.map(function (selectOptionValue, idx) {
-                                            console.log("selectOptionValue[selectId]", selectOptionValue[selectId])
-                                            console.log("SELECTED", selectOptionValue[selectId] == editData.additionalSelections[selectOption].value)
-                                            return (<option key={idx} value={selectOptionValue[selectId]}>{selectOptionValue.name}</option>)
-                                        })
-                                   }
-                                </select>
-                            </div>
+                                <div>
+                                    <p>{selectOption}</p>
+                                    <Select
+                                    options={translateDataToSelectFunction(selectionList, selectId, defaultValue)}
+                                        touchUi={false}
+                                        onChange={(e, instance) => { translateFromSelectFunction(e, selectOption)}}
+                                        defaultValue={defaultValue}
+                                        isMulti={editData.additionalSelections[selectOption].multiSelect}
+                                    />  
+                                </div>
                         )
                     })
                 }

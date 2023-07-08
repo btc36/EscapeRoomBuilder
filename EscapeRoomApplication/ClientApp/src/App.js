@@ -9,7 +9,7 @@ import { Items } from './components/SubPages/Items';
 import { Locks } from './components/SubPages/Locks';
 import { LockTypes } from './components/SubPages/LockTypes';
 import { Media } from './components/SubPages/Media';
-import { Props } from './components/SubPages/Props';
+import { PropNLocations } from './components/SubPages/PropNLocations';
 import { Puzzles } from './components/SubPages/Puzzles';
 import { Stages } from './components/SubPages/Stages';
 import { FrontEndDAO } from './FrontEndDAO';
@@ -174,7 +174,7 @@ export default class App extends Component {
             )}
         />
         <Route path='/props' component={() => (
-                <Props
+                <PropNLocations
                     userId={this.state.userId}
                     userName={this.state.userName}
                     gameId={this.state.gameId}

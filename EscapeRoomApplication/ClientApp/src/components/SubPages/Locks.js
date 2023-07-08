@@ -160,14 +160,14 @@ export class Locks extends Component {
     }
 
     async removeLine(removeData) {
-        var removelineReponse = await this.props.FrontEndDAO.removeLock(removeData.lineId);
-        if (removelineReponse.success) {
+        var removelineResponse = await this.props.FrontEndDAO.removeLock(removeData.lineId);
+        if (removelineResponse.success) {
             this.setState({
-                locks: removelineReponse.locks
+                locks: removelineResponse.locks
             })
         }
         else {
-            alert("THERE HAS BEEN AN ERROR", removelineReponse);
+            alert("THERE HAS BEEN AN ERROR", removelineResponse);
         }
     }
 

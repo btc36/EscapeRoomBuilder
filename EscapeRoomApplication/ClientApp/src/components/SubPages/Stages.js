@@ -138,10 +138,10 @@ export class Stages extends Component {
     }
 
     async removeLine(removeData){
-        var removelineReponse = await this.props.FrontEndDAO.removeStage(removeData.lineId);
-        if (removelineReponse.success) {
+        var removelineResponse = await this.props.FrontEndDAO.removeStage(removeData.lineId);
+        if (removelineResponse.success) {
             this.setState({
-                stages: removelineReponse.stages
+                stages: removelineResponse.stages
             })
         }
         else {

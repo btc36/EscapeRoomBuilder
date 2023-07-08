@@ -5,6 +5,7 @@ import { Loader } from '../Widgets/Loader';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { PageLink } from '../SubComponents/PageLink';
+import { Items } from './Items';
 
 export class Puzzles extends Component {
 
@@ -12,6 +13,8 @@ export class Puzzles extends Component {
         super(props);
         this.state = {
             puzzles: [],
+            items: [],
+            puzzleItems: [],
             locks: [],
             stages: [],
             showDialog: false,
@@ -32,6 +35,12 @@ export class Puzzles extends Component {
                         value: "",
                         selectionList: [],
                         id: "id_stages"
+                    },
+                    puzzleItem: {
+                        value: "",
+                        id: 'id_items',
+                        selectionList: [],
+                        multiSelect: true
                     }
                 }
             },
@@ -51,6 +60,7 @@ export class Puzzles extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
+        this.createPuzzleItemsDict = this.createPuzzleItemsDict.bind(this);
         this.getPuzzles();
     }
 
@@ -102,13 +112,17 @@ export class Puzzles extends Component {
         var editData = this.state.editData;
         editData.additionalSelections.lock.selectionList = gameInfo.locks;
         editData.additionalSelections.stage.selectionList = gameInfo.stages;
+        editData.additionalSelections.puzzleItem.selectionList = gameInfo.items;
         this.setState({
             puzzles: gameInfo.puzzles,
+            puzzleItems: gameInfo.puzzleItems,
+            items: gameInfo.items,
             locks: gameInfo.locks,
             stages: gameInfo.stages,
             editData: editData
         })
     }
+
 
     closeDialog(a, b) {
         this.setState({
@@ -166,14 +180,14 @@ export class Puzzles extends Component {
     }
 
     async removeLine(removeData) {
-        var removelineReponse = await this.props.FrontEndDAO.removePuzzle(removeData.lineId);
-        if (removelineReponse.success) {
+        var removelineResponse = await this.props.FrontEndDAO.removePuzzle(removeData.lineId);
+        if (removelineResponse.success) {
             this.setState({
-                puzzles: removelineReponse.puzzles
+                puzzles: removelineResponse.puzzles
             })
         }
         else {
-            alert("THERE HAS BEEN AN ERROR", removelineReponse);
+            alert("THERE HAS BEEN AN ERROR", removelineResponse);
         }
     }
 
@@ -219,11 +233,21 @@ export class Puzzles extends Component {
         console.log("PUZZLE TYPES RESPONSE", updateResponse)
         if (updateResponse.success) {
             this.setState({
-                puzzles: updateResponse.puzzles
+                puzzles: updateResponse.puzzles,
+                puzzleItems: updateResponse.puzzleItems
             })
         }
         else {
-            alert("THERE WAS AN ERROR", updateResponse)
+            //The page needs to reload, its a timing issue. 
+            //The database is updated, but something times out
+            //If I step through with the debugger it works
+            //Find the issue later, for now just refresh
+            if (updateResponse.message.indexOf("disposed")) {
+                window.location.reload(true);
+            }
+            else {
+                alert("THERE WAS AN ERROR", updateResponse)
+            }
         }
         this.setState({
             editData: {
@@ -239,6 +263,12 @@ export class Puzzles extends Component {
                         value: "",
                         id: "id_stages",
                         selectionList: this.state.stages
+                    },
+                    puzzleItem: {
+                        value: "",
+                        id: 'id_items',
+                        selectionList: this.state.items,
+                        multiSelect: true
                     }
                 }
             },
@@ -251,14 +281,50 @@ export class Puzzles extends Component {
         })
     }
 
-
+    createPuzzleItemsDict() {
+        var puzzleItems = this.state.puzzleItems;
+        var puzzleItemDict = {};
+        for (var i in puzzleItems) {
+            var puzzleItem = puzzleItems[i];
+            var puzzleId = puzzleItem.puzzle;
+            if (!puzzleItemDict[puzzleId]) {
+                puzzleItemDict[puzzleId] = {
+                    items: [],
+                    itemsString: "",
+                    itemIdString: ""
+                };
+            }
+            puzzleItemDict[puzzleId].items.push(puzzleItem);
+            var itemName = puzzleItem.item_name;
+            var itemStringArray = puzzleItemDict[puzzleId].itemsString ? puzzleItemDict[puzzleId].itemsString.split(", ") : [];
+            itemStringArray.push(itemName);
+            if (itemStringArray.length > 1) {
+                puzzleItemDict[puzzleId].itemsString = itemStringArray.join(", ");
+            }
+            else {
+                puzzleItemDict[puzzleId].itemsString = itemName;
+            }
+            var itemId = puzzleItem.item.toString();
+            var itemIdStringArray = puzzleItemDict[puzzleId].itemIdString ? puzzleItemDict[puzzleId].itemIdString.split() : [];
+            itemIdStringArray.push(itemId);
+            if (itemIdStringArray.length > 1) {
+                puzzleItemDict[puzzleId].itemIdString = itemIdStringArray.join();
+            }
+            else {
+                puzzleItemDict[puzzleId].itemIdString = itemId;
+            }
+        }
+        return puzzleItemDict;
+    }
 
     render() {
         console.log("Puzzles STATE", this.state);
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
+        var puzzleItemDict = this.createPuzzleItemsDict();
         var locks = this.state.locks;
         var stages = this.state.stages;
+        var items = this.state.items;
         return (
             <div>
                 {
@@ -289,6 +355,7 @@ export class Puzzles extends Component {
                                 <td>Description</td>
                                 <td>Lock</td>
                                 <td>Stage</td>
+                                <td>Items</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -319,6 +386,7 @@ export class Puzzles extends Component {
                                             <td>{puzzle.description}</td>
                                             <td>{lockName}</td>
                                             <td>{stageName}</td>
+                                            <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: puzzle.id_puzzles,
@@ -334,8 +402,14 @@ export class Puzzles extends Component {
                                                             value: puzzle.stage,
                                                             id: 'id_stages',
                                                             selectionList: stages
+                                                        },
+                                                        puzzleItem: {
+                                                            value: puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemIdString : -1,
+                                                            id: 'id_items',
+                                                            selectionList: items,
+                                                            multiSelect: true
                                                         }
-                                                    }
+                                                    },
                                                 })
                                             }}>EDIT</button></td>
                                             <td><button onClick={() => {

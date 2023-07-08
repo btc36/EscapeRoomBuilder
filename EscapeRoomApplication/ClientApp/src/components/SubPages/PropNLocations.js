@@ -1,5 +1,4 @@
 ﻿import React, { Component } from 'react';
-import { FrontEndDAO } from '../../FrontEndDAO';
 import { DataEntry } from '../SubComponents/BuildGame/DataEntry';
 import { DialogMessage } from '../Widgets/DialogMessage';
 import { Loader } from '../Widgets/Loader';
@@ -7,25 +6,41 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { PageLink } from '../SubComponents/PageLink';
 
-export class LockTypes extends Component {
+export class PropNLocations extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            lockTypes: [],
+            propNLocations: [],
+            puzzles: [],
             showDialog: false,
             dialogTitle: "",
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
-            editData: {},
+            editData: {
+                name: "",
+                description: "",
+                additionalSelections: {
+                    puzzle: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_puzzles"
+                    },
+                    parent: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_props"
+                    }
+                }
+            },
             editing: true,
             loading: false,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
         this.showConfirm = this.showConfirm.bind(this);
-        this.getLockTypes = this.getLockTypes.bind(this);
+        this.getPropNLocations = this.getPropNLocations.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
         this.updateEditData = this.updateEditData.bind(this);
         this.addLine = this.addLine.bind(this);
@@ -35,7 +50,7 @@ export class LockTypes extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
-        this.getLockTypes();
+        this.getPropNLocations();
     }
 
     startLoading() {
@@ -81,10 +96,15 @@ export class LockTypes extends Component {
         confirmAlert(options);
     }
 
-    async getLockTypes() {
-        var gameInfo = await this.props.FrontEndDAO.getLockTypes();
+    async getPropNLocations() {
+        var gameInfo = await this.props.FrontEndDAO.getPropNLocations();
+        var editData = this.state.editData;
+        editData.additionalSelections.puzzle.selectionList = gameInfo.puzzles;
+        editData.additionalSelections.parent.selectionList = gameInfo.propNLocations;
         this.setState({
-            lockTypes: gameInfo.lockTypes
+            propNLocations: gameInfo.propNLocations,
+            puzzles: gameInfo.puzzles,
+            editData: editData
         })
     }
 
@@ -92,13 +112,20 @@ export class LockTypes extends Component {
         this.setState({
             showDialog: false
         });
-
     }
 
-    updateEditData(e, inputName) {
+    updateEditData(e, inputName, inputType) {
         console.log("E", e);
         var editData = this.state.editData;
-        editData[inputName] = e.target.value;
+        if (inputType == "extraInput") {
+            editData.additionalInputs[inputName] = e.target.value;
+        }
+        else if (inputType == "selection") {
+            editData.additionalSelections[inputName].value = e.target.value;
+        }
+        else {
+            editData[inputName] = e.target.value;
+        }
         this.setState({
             editData: editData
         });
@@ -127,9 +154,9 @@ export class LockTypes extends Component {
 
     removeLineConfirm(removeData) {
         this.showConfirm(
-            "Remove Lock Type",
+            "Remove Prop/Location",
             "Are you sure you want to remove " + removeData.name + "? This cannot be reversed",
-            "Remove Lock Type",
+            "Remove Prop/Location",
             "Just Kidding",
             () => { this.removeLine(removeData) },
             () => { }
@@ -137,10 +164,10 @@ export class LockTypes extends Component {
     }
 
     async removeLine(removeData) {
-        var removelineResponse = await this.props.FrontEndDAO.removeLockType(removeData.lineId);
+        var removelineResponse = await this.props.FrontEndDAO.removePropNLocation(removeData.lineId);
         if (removelineResponse.success) {
             this.setState({
-                lockTypes: removelineResponse.lockTypes
+                propNLocations: removelineResponse.propNLocations
             })
         }
         else {
@@ -182,28 +209,42 @@ export class LockTypes extends Component {
 
     async submitLineEntryCallback() {
         if (this.state.editing) {
-            var updateResponse = await this.props.FrontEndDAO.updateLockType(this.state.editData);
+            var updateResponse = await this.props.FrontEndDAO.updatePropNLocation(this.state.editData);
         }
         else {
-            var updateResponse = await this.props.FrontEndDAO.addLockType(this.state.editData);
+            var updateResponse = await this.props.FrontEndDAO.addPropNLocation(this.state.editData);
         }
-        console.log("LOCK TYPES RESPONSE", updateResponse)
+        console.log("PropNLocation RESPONSE", updateResponse)
         if (updateResponse.success) {
             this.setState({
-                lockTypes: updateResponse.lockTypes
+                propNLocations: updateResponse.propNLocations
             })
         }
         else {
             alert("THERE WAS AN ERROR", updateResponse)
         }
         this.setState({
-            editData: {},
+            editData: {
+                name: "",
+                description: "",
+                additionalSelections: {
+                    puzzle: {
+                        value: -1,
+                        id: "id_puzzles",
+                        selectionList: this.state.puzzles
+                    },
+                    parent: {
+                        value: -1,
+                        id: "id_props",
+                        selectionList: this.state.propNLocations
+                    }
+                }
+            },
             showDialog: false,
             dialogTitle: "",
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
-            editData: {},
             loading: false
         })
     }
@@ -211,9 +252,11 @@ export class LockTypes extends Component {
 
 
     render() {
-        console.log("Lock TYPES STATE", this.state);
+        console.log("PropNLocation STATE", this.state);
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
+        var puzzles = this.state.puzzles;
+        var propNLocations = this.state.propNLocations;
         return (
             <div>
                 {
@@ -230,40 +273,72 @@ export class LockTypes extends Component {
                     isErrorMessage={this.state.isErrorMessage}
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
-                <h3>Lock Types</h3>
+                <h3>Props/Locations</h3>
                 <button> <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
                 /></button>
-                <button onClick={this.addLine}>Add New Lock Type</button>
+                <button onClick={this.addLine}>Add New Prop/Location</button>
                 <div>
                     <table>
                         <thead>
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
+                                <td>Parent</td>
+                                <td>Access Puzzle</td>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                this.state.lockTypes.map(function (lockType, idx) {
+                                this.state.propNLocations.map(function (propNLocation, idx) {
+                                    console.log("Puzzles", puzzles);
+                                    console.log("PropsNLocations", propNLocations);
+                                    var puzzleName;
+                                    var parentName;
+                                    for (var i in puzzles) {
+                                        if (puzzles[i].id_puzzles == propNLocation.access_puzzle) {
+                                            puzzleName = puzzles[i].name;
+                                            break;
+                                        }
+                                    }
+                                    for (var i in propNLocations) {
+                                        if (propNLocations[i].id_props == propNLocation.parent_prop) {
+                                            parentName = propNLocations[i].name;
+                                            break;
+                                        }
+                                    }
+                                    console.log("MY Puzzle NAME", puzzleName);
+                                    console.log("MY parent NAME", parentName);
                                     return (
-                                        <tr key={lockType.id_lock_types}>
-                                            <td>{lockType.name}</td>
-                                            <td>{lockType.description}</td>
+                                        <tr key={propNLocation.id_props}>
+                                            <td>{propNLocation.name}</td>
+                                            <td>{propNLocation.description}</td>
+                                            <td>{parentName}</td>
+                                            <td>{puzzleName}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
-                                                    lineId: lockType.id_lock_types,
-                                                    name: lockType.name,
-                                                    description: lockType.description,
-                                                    additionalInputs: {},
-                                                    additionalSelections: {}
+                                                    lineId: propNLocation.id_props,
+                                                    name: propNLocation.name,
+                                                    description: propNLocation.description,
+                                                    additionalSelections: {
+                                                        puzzle: {
+                                                            value: propNLocation.access_puzzle,
+                                                            id: 'id_puzzles',
+                                                            selectionList: puzzles
+                                                        },
+                                                        parent: {
+                                                            value: propNLocation.parent_prop,
+                                                            id: 'id_props',
+                                                            selectionList: propNLocations
+                                                        }
+                                                    }
                                                 })
                                             }}>EDIT</button></td>
                                             <td><button onClick={() => {
                                                 removeLineFunction({
-                                                    name: lockType.name,
-                                                    lineId: lockType.id_lock_types
+                                                    name: propNLocation.name,
+                                                    lineId: propNLocation.id_props
                                                 })
                                             }}>REMOVE</button></td>
                                         </tr>

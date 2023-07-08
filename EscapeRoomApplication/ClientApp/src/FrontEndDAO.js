@@ -24,6 +24,14 @@ export class FrontEndDAO {
         this.addPuzzle = this.addPuzzle.bind(this);
         this.updatePuzzle = this.updatePuzzle.bind(this);
         this.removePuzzle = this.removePuzzle.bind(this);
+        this.getPropNLocations = this.getPropNLocations.bind(this);
+        this.addPropNLocation = this.addPropNLocation.bind(this);
+        this.updatePropNLocation = this.updatePropNLocation.bind(this);
+        this.removePropNLocation = this.removePropNLocation.bind(this);
+        this.getItems = this.getItems.bind(this);
+        this.addItem = this.addItem.bind(this);
+        this.updateItem = this.updateItem.bind(this);
+        this.removeItem = this.removeItem.bind(this);
     }
 
     async getUsers(userId) {
@@ -436,7 +444,8 @@ export class FrontEndDAO {
             name: editData.name,
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
-            stageId: editData.additionalSelections.stage.value
+            stageId: editData.additionalSelections.stage.value,
+            puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split(",") : []
         };
         await this.makeRESTCall(
             'escaperoomdao?methodName=updatePuzzle&parameters=' + JSON.stringify(parameters),
@@ -464,7 +473,8 @@ export class FrontEndDAO {
             name: editData.name,
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
-            stageId: editData.additionalSelections.stage.value
+            stageId: editData.additionalSelections.stage.value,
+            puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split() : []
         };
         await this.makeRESTCall(
             'escaperoomdao?methodName=addPuzzle&parameters=' + JSON.stringify(parameters),
@@ -489,6 +499,7 @@ export class FrontEndDAO {
         var parameters = {
             gameId: this.gameId,
             puzzleId: puzzleId,
+            puzzleItems: [],
             remove: true
         };
         await this.makeRESTCall(
@@ -507,5 +518,213 @@ export class FrontEndDAO {
             }
         );
         return removePuzzleInfo;
+    }
+
+    async getPropNLocations() {
+        var getPropNLocationsInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getPropNLocations&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getPropNLocationsResponse) => {
+                console.log("TESTING PropNLocations", getPropNLocationsResponse);
+                getPropNLocationsInfo = getPropNLocationsResponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getPropNLocationsInfo;
+    }
+
+    async updatePropNLocation(editData) {
+        var updatePropNLocationInfo;
+        var parameters = {
+            gameId: this.gameId,
+            propId: editData.lineId,
+            name: editData.name,
+            description: editData.description,
+            parent: editData.additionalSelections.parent.value,
+            puzzleId: editData.additionalSelections.puzzle.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updatePropNLocation&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updatePropNLocationResponse) => {
+                console.log("Update PropNLocation", updatePropNLocationResponse);
+                updatePropNLocationInfo = updatePropNLocationResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updatePropNLocationInfo;
+    }
+
+    async addPropNLocation(editData) {
+        var addPropNLocationInfo;
+        console.log("ADD LOCK", editData)
+        var parameters = {
+            gameId: this.gameId,
+            name: editData.name,
+            description: editData.description,
+            parent: editData.additionalSelections.parent.value,
+            puzzleId: editData.additionalSelections.puzzle.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addPropNLocation&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addPropNLocationResponse) => {
+                console.log("Add PropNLocation", addPropNLocationResponse);
+                addPropNLocationInfo = addPropNLocationResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addPropNLocationInfo;
+    }
+
+    async removePropNLocation(propNLocation) {
+        var removePropNLocationInfo;
+        var parameters = {
+            gameId: this.gameId,
+            propId: propNLocation,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updatePropNLocation&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removePropNlocationResponse) => {
+                console.log("Remove PropNLocation Response", removePropNlocationResponse);
+                removePropNLocationInfo = removePropNlocationResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removePropNLocationInfo;
+    }
+
+    async getItems() {
+        var getItemsInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getItems&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getItemsResponse) => {
+                console.log("TESTING Items", getItemsResponse);
+                getItemsInfo = getItemsResponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getItemsInfo;
+    }
+
+    async updateItem(editData) {
+        var updateItemInfo;
+        var parameters = {
+            gameId: this.gameId,
+            itemId: editData.lineId,
+            name: editData.name,
+            description: editData.description,
+            propId: editData.additionalSelections.location.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateItem&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updateItemResponse) => {
+                console.log("Update Item", updateItemResponse);
+                updateItemInfo = updateItemResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updateItemInfo;
+    }
+
+    async addItem(editData) {
+        var addItemInfo;
+        console.log("ADD LOCK", editData)
+        var parameters = {
+            gameId: this.gameId,
+            name: editData.name,
+            description: editData.description,
+            propId: editData.additionalSelections.location.value
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addItem&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addItemReponse) => {
+                console.log("Add Item", addItemReponse);
+                addItemInfo = addItemReponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addItemInfo;
+    }
+
+    async removeItem(item) {
+        var removeItemInfo;
+        var parameters = {
+            gameId: this.gameId,
+            itemId: item,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateItem&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removeItemResponse) => {
+                console.log("Remove Item Response", removeItemResponse);
+                removeItemInfo = removeItemResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removeItemInfo;
     }
 }
