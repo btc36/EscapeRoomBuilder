@@ -361,7 +361,7 @@ namespace EscapeRoomApplication
             using (connection)
             {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved) VALUES (@value1, @value2, @value3, @value4)";
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
@@ -371,6 +371,7 @@ namespace EscapeRoomApplication
                     command.Parameters.AddWithValue("@value2", parameters.description);
                     command.Parameters.AddWithValue("@value3", parameters.stageId);
                     command.Parameters.AddWithValue("@value4", parameters.lockId);
+                    command.Parameters.AddWithValue("@value5", getPuzzleCode(connection));
                     command.ExecuteNonQuery();
                     // Execute the insert command
 
@@ -1207,6 +1208,33 @@ namespace EscapeRoomApplication
                 }
             }
             return myResponse;
+        }
+
+        public int getPuzzleCode(MySqlConnection connection)
+        {
+            var puzzleCodes =  new List<int>();
+            string sqlQuery = "SELECT puzzle_code FROM puzzles";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                // Execute the query and obtain a MySqlDataReader
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    // Loop through the rows returned by the query
+                    while (reader.Read())
+                    {
+                        // Access columns by name or index
+                        int puzzleCode = reader.GetInt32("puzzle_code");
+                        puzzleCodes.Add(puzzleCode);
+                    }
+                }
+            }
+            Random rnd = new Random();
+            int newPuzzleCode = rnd.Next(10000, 99999);
+            while(puzzleCodes.IndexOf(newPuzzleCode) > -1)
+            {
+                newPuzzleCode = rnd.Next(10000, 99999);
+            }
+            return newPuzzleCode;
         }
     }
 }
