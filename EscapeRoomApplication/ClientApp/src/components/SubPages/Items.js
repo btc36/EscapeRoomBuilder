@@ -25,7 +25,8 @@ export class Items extends Component {
                     location: {
                         value: -1,
                         selectionList: [],
-                        id: "id_props"
+                        id: "id_props",
+                        title: "Location"
                     }
                 }
             },
@@ -225,7 +226,8 @@ export class Items extends Component {
                     location: {
                         value: -1,
                         id: "id_props",
-                        selectionList: this.state.propNLocations
+                        selectionList: this.state.propNLocations,
+                        title: "Location"
                     }
                 }
             },
@@ -300,7 +302,8 @@ export class Items extends Component {
                                                         location: {
                                                             value: item.location,
                                                             id: 'id_props',
-                                                            selectionList: locations
+                                                            selectionList: locations,
+                                                            title: "Location"
                                                         }
                                                     }
                                                 })

@@ -132,10 +132,11 @@ export class DataEntry extends Component {
                         console.log("SELECT OPTION", editData.additionalSelections[selectOption])
                         var selectionList = editData.additionalSelections[selectOption].selectionList;
                         var selectId = editData.additionalSelections[selectOption].id;
+                        var selectOptionTitle = editData.additionalSelections[selectOption].title
                         var defaultValue = getDefaultValueFunction(editData.additionalSelections[selectOption]);
                         return (
                                 <div>
-                                    <p>{selectOption}</p>
+                                    <p>{selectOptionTitle}</p>
                                     <Select
                                     options={translateDataToSelectFunction(selectionList, selectId, defaultValue)}
                                         touchUi={false}

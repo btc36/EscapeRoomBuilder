@@ -727,4 +727,102 @@ export class FrontEndDAO {
         );
         return removeItemInfo;
     }
+    async getClues(puzzleId) {
+        var getCluesInfo;
+        var parameters = {
+            puzzleId: puzzleId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getClues&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getCluesResponse) => {
+                console.log("TESTING Clues", getCluesResponse);
+                getCluesInfo = getCluesResponse;
+            },
+            (title, error) => {
+                console.log('Check Version Num Error:', error);
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getCluesInfo;
+    }
+
+    async updateClue(clueInfo) {
+        var updateClueInfo;
+        var parameters = {
+            description: clueInfo.content,
+            clueId: clueInfo.clueId,
+            puzzleId: clueInfo.puzzleId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateClue&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (updateClueResponse) => {
+                console.log("Update Clue", updateClueResponse);
+                updateClueInfo = updateClueResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return updateClueInfo;
+    }
+
+    async addClue(clueInfo) {
+        var addClueInfo;
+        var parameters = {
+            puzzleId: clueInfo.puzzleId,
+            description: clueInfo.content
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=addClue&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (addClueResponse) => {
+                console.log("Add Item", addClueResponse);
+                addClueInfo = addClueResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return addClueInfo;
+    }
+
+    async removeClue(clueId, puzzleId) {
+        var removeClueInfo;
+        var parameters = {
+            clueId: clueId,
+            puzzleId: puzzleId,
+            remove: true
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=updateClue&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (removeClueResponse) => {
+                console.log("removeClueResponse", removeClueResponse);
+                removeClueInfo = removeClueResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return removeClueInfo;
+    }
+
 }

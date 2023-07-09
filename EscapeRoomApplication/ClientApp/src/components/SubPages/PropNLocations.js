@@ -25,12 +25,14 @@ export class PropNLocations extends Component {
                     puzzle: {
                         value: -1,
                         selectionList: [],
-                        id: "id_puzzles"
+                        id: "id_puzzles",
+                        title: "Puzzle"
                     },
                     parent: {
                         value: -1,
                         selectionList: [],
-                        id: "id_props"
+                        id: "id_props",
+                        title: "Location"
                     }
                 }
             },
@@ -231,12 +233,14 @@ export class PropNLocations extends Component {
                     puzzle: {
                         value: -1,
                         id: "id_puzzles",
-                        selectionList: this.state.puzzles
+                        selectionList: this.state.puzzles,
+                        title: "Puzzle"
                     },
                     parent: {
                         value: -1,
                         id: "id_props",
-                        selectionList: this.state.propNLocations
+                        selectionList: this.state.propNLocations,
+                        title: "Location"
                     }
                 }
             },
@@ -325,12 +329,14 @@ export class PropNLocations extends Component {
                                                         puzzle: {
                                                             value: propNLocation.access_puzzle,
                                                             id: 'id_puzzles',
-                                                            selectionList: puzzles
+                                                            selectionList: puzzles,
+                                                            title: "Puzzle"
                                                         },
                                                         parent: {
                                                             value: propNLocation.parent_prop,
                                                             id: 'id_props',
-                                                            selectionList: propNLocations
+                                                            selectionList: propNLocations,
+                                                            title: "Location"
                                                         }
                                                     }
                                                 })

@@ -6,6 +6,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { PageLink } from '../SubComponents/PageLink';
 import { Items } from './Items';
+import { Clues } from './Clues';
 
 export class Puzzles extends Component {
 
@@ -17,6 +18,7 @@ export class Puzzles extends Component {
             puzzleItems: [],
             locks: [],
             stages: [],
+            clues: [],
             showDialog: false,
             dialogTitle: "",
             dialogContent: "",
@@ -29,18 +31,21 @@ export class Puzzles extends Component {
                     lock: {
                         value: "",
                         selectionList: [],
-                        id: "id_locks"
+                        id: "id_locks",
+                        title: "Lock"
                     },
                     stage: {
                         value: "",
                         selectionList: [],
-                        id: "id_stages"
+                        id: "id_stages",
+                        title: "Stage"
                     },
                     puzzleItem: {
                         value: "",
                         id: 'id_items',
                         selectionList: [],
-                        multiSelect: true
+                        multiSelect: true,
+                        title: "Required Items"
                     }
                 }
             },
@@ -61,6 +66,11 @@ export class Puzzles extends Component {
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
         this.createPuzzleItemsDict = this.createPuzzleItemsDict.bind(this);
+        this.updateClueValue = this.updateClueValue.bind(this);
+        this.addClue = this.addClue.bind(this);
+        this.getClues = this.getClues.bind(this);
+        this.updateClue = this.updateClue.bind(this);
+        this.removeClue = this.removeClue.bind(this);
         this.getPuzzles();
     }
 
@@ -257,18 +267,21 @@ export class Puzzles extends Component {
                     lock: {
                         value: "",
                         id: "id_locks",
-                        selectionList: this.state.locks
+                        selectionList: this.state.locks,
+                        title: 'Lock'
                     },
                     stage: {
                         value: "",
                         id: "id_stages",
-                        selectionList: this.state.stages
+                        selectionList: this.state.stages,
+                        title: "Stage"
                     },
                     puzzleItem: {
                         value: "",
                         id: 'id_items',
                         selectionList: this.state.items,
-                        multiSelect: true
+                        multiSelect: true,
+                        title: "Required Items"
                     }
                 }
             },
@@ -317,10 +330,115 @@ export class Puzzles extends Component {
         return puzzleItemDict;
     }
 
+    async getClues(puzzleId, puzzleName) {  
+        var gameInfo = await this.props.FrontEndDAO.getClues(puzzleId);
+        this.setState({
+            clues: gameInfo.clues,
+            dialogContent: ""
+        });
+        console.log("GAME INFO**************************,", gameInfo.clues)
+        setTimeout(() => { this.setClueDialog(gameInfo.clues, puzzleId, puzzleName) });
+    }
+
+    setClueDialog(clues, puzzleId, puzzleName) {
+        this.setState({
+            showDialog: true,
+            dialogTitle: "Clues for " + puzzleName,
+            dialogContent: <Clues
+                clues={clues}
+                updateClueValue={this.updateClueValue}
+                updateClue={this.updateClue}
+                removeClue={this.removeClue}
+                addClue={this.addClue}
+                puzzleId={puzzleId}
+                puzzleName={puzzleName}
+            />,
+            dialogFullScreen: true
+        });
+    }
+
+    updateClueValue(e, clueId) {
+        console.log("UPDATING", e, clueId)
+        console.log("CLUES", this.state.clues)
+        console.log("STATE",this.state);
+        var clues = this.state.clues;
+        for (var i in clues) {
+            if (clues[i].id_clues == clueId) {
+                clues[i].clue_text = e.target.value
+                break;
+            }
+        }
+        this.setState({
+            clues: clues
+        })
+    }
+
+    async addClue(puzzleId, puzzleName) {
+        var newClueText = document.getElementById("newClue").value;
+        if (newClueText) {
+            var gameInfo = await this.props.FrontEndDAO.addClue({
+                puzzleId: puzzleId,
+                content: newClueText
+            });
+            console.log("GAME INFO 2,", gameInfo.clues)
+            if (gameInfo.success) {
+                document.getElementById("newClue").value = ""
+                this.getClues(puzzleId, puzzleName);
+            }
+            else {
+                console.log("GAME INFO", gameInfo)
+                alert("THERE HAS BEEN AN ERROR");
+            }
+        }
+    }
+
+    async updateClue(clueId, puzzleId, puzzleName) {
+        var clues = this.state.clues;
+        var clueText;
+        for (var i in clues) {
+            if (clues[i].id_clues == clueId) {
+                clueText = clues[i].clue_text;
+                break;
+            }
+        }
+        if (clueText) {
+            var gameInfo = await this.props.FrontEndDAO.updateClue({
+                content: clueText,
+                clueId: clueId,
+                puzzleId: puzzleId
+            });
+            console.log("GAME INFO 3,", gameInfo.clues)
+            if (gameInfo.success) {
+                this.getClues(puzzleId, puzzleName);
+            }
+            else {
+                console.log("GAME INFO", gameInfo)
+                alert("THERE HAS BEEN AN ERROR");
+            }
+        }
+        else {
+            alert("The clue cannot be empty");
+        }
+        console.log("UPDATE CLUE", clueId)
+    }
+
+    async removeClue(clueId, puzzleId, puzzleName) {
+        var gameInfo = await this.props.FrontEndDAO.removeClue(clueId, puzzleId);
+        console.log("GAME INFO 4,", gameInfo.clues)
+        if (gameInfo.success) {
+            this.getClues(puzzleId, puzzleName);
+        }
+        else {
+            console.log("GAME INFO", gameInfo)
+            alert("THERE HAS BEEN AN ERROR");
+        }
+    }
+
     render() {
         console.log("Puzzles STATE", this.state);
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
+        var getCluesFunction = this.getClues;
         var puzzleItemDict = this.createPuzzleItemsDict();
         var locks = this.state.locks;
         var stages = this.state.stages;
@@ -387,6 +505,7 @@ export class Puzzles extends Component {
                                             <td>{lockName}</td>
                                             <td>{stageName}</td>
                                             <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
+                                            <td><button onClick={() => { getCluesFunction(puzzle.id_puzzles,puzzle.name)}}>Clues</button></td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: puzzle.id_puzzles,
@@ -396,18 +515,21 @@ export class Puzzles extends Component {
                                                         lock: {
                                                             value: puzzle.lock_solved,
                                                             id: 'id_locks',
-                                                            selectionList: locks
+                                                            selectionList: locks,
+                                                            title: "Lock"
                                                         },
                                                         stage: {
                                                             value: puzzle.stage,
                                                             id: 'id_stages',
-                                                            selectionList: stages
+                                                            selectionList: stages,
+                                                            title: "Stage"
                                                         },
                                                         puzzleItem: {
                                                             value: puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemIdString : -1,
                                                             id: 'id_items',
                                                             selectionList: items,
-                                                            multiSelect: true
+                                                            multiSelect: true,
+                                                            title: "Required Items"
                                                         }
                                                     },
                                                 })

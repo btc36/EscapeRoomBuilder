@@ -34,6 +34,9 @@ namespace EscapeRoomApplication
             EscapeRoomDAOFunctions["addItem"] = this.addItem;
             EscapeRoomDAOFunctions["updateItem"] = this.updateItem;
             EscapeRoomDAOFunctions["getPuzzleItems"] = this.getPuzzleItems;
+            EscapeRoomDAOFunctions["getClues"] = this.getClues;
+            EscapeRoomDAOFunctions["addClue"] = this.addClue;
+            EscapeRoomDAOFunctions["updateClue"] = this.updateClue;
         }
         public MySqlConnection getConnection()
         {
@@ -404,7 +407,12 @@ namespace EscapeRoomApplication
                 command.Parameters.AddWithValue("@value1", parameters.puzzleId);
                 command.ExecuteNonQuery();
             }
-            //Add clues later
+            sqlQuery = "DELETE FROM clues WHERE clue_puzzle = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.puzzleId);
+                command.ExecuteNonQuery();
+            }
         }
         public DAOResponseObject updatePuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
@@ -1094,6 +1102,100 @@ namespace EscapeRoomApplication
             {
                 command.Parameters.AddWithValue("@value1", parameters.puzzleItem.item);
                 command.Parameters.AddWithValue("@value2", parameters.puzzleItem.puzzle);
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table-" + ex.Message;
+                }
+            }
+            return myResponse;
+        }
+
+        public DAOResponseObject getClues(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            myResponse.Clues.Clear();
+            string sqlQuery = "SELECT * FROM clues WHERE clue_puzzle = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+
+                command.Parameters.AddWithValue("@value1", parameters.puzzleId);
+                // Execute the query and obtain a MySqlDataReader
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    // Loop through the rows returned by the query
+                    while (reader.Read())
+                    {
+                        // Access columns by name or index
+                        int clueId = reader.GetInt32("id_clues");
+                        string clueText = reader.GetString("clue_text");
+                        int puzzle = reader.GetInt32("clue_puzzle");
+                        Clue clue = new Clue(clueId, clueText, puzzle);
+                        myResponse.Clues.Add(clue);
+                    }
+                }
+                myResponse.gotClues = true;
+            }
+            return myResponse;
+        }
+        public DAOResponseObject addClue(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            using (connection)
+            {
+                // Create a SQL query for the insert statement
+                string sqlQuery = "INSERT INTO clues(clue_text, clue_puzzle) VALUES (@value1, @value2)";
+
+                // Create a MySqlCommand object with the SQL query and connection
+                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                {
+                    // Add parameters for the values to be inserted
+                    command.Parameters.AddWithValue("@value1", parameters.description);
+                    command.Parameters.AddWithValue("@value2", parameters.puzzleId);
+                    command.ExecuteNonQuery();
+                    // Execute the insert command
+
+                    long lastInsertedId = command.LastInsertedId;
+                    if (lastInsertedId == null)
+                    {
+                        myResponse.success = false;
+                        myResponse.message = "Failure to insert into the table";
+                    }
+                    else
+                    {
+                        myResponse.insertedId = lastInsertedId;
+                    }
+
+                }
+            }
+            return myResponse;
+        }
+
+        public DAOResponseObject updateClue(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
+        {
+            string sqlQuery = "";
+            if (parameters.remove)
+            {
+                removeItemReferences(connection, parameters, myResponse);
+                sqlQuery = "DELETE from clues WHERE id_clues = @value1";
+            }
+            else
+            {
+                sqlQuery = "UPDATE clues " +
+                    "SET clue_text=@value2 " +
+                    "WHERE id_clues = @value1";
+
+            }
+
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.clueId);
+                if (!parameters.remove)
+                {
+                    command.Parameters.AddWithValue("@value2", parameters.description);
+                }
                 try
                 {
                     command.ExecuteNonQuery();

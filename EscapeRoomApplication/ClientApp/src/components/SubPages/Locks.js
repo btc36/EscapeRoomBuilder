@@ -27,7 +27,8 @@ export class Locks extends Component {
                     lockType: {
                         value: "",
                         selectionList: [],
-                        id: "id_lock_types"
+                        id: "id_lock_types",
+                        title: "Lock Type"
                     }
                 }
             },
@@ -230,7 +231,8 @@ export class Locks extends Component {
                     lockType: {
                         value: "",
                         id: "id_lock_types",
-                        selectionList: this.state.lockTypes
+                        selectionList: this.state.lockTypes,
+                        title: "Lock Type"
                     }
                 }
             },
@@ -313,7 +315,8 @@ export class Locks extends Component {
                                                         lockType: {
                                                             value: lock.lock_type,
                                                             id: 'id_lock_types',
-                                                            selectionList: lockTypes
+                                                            selectionList: lockTypes,
+                                                            title: "Lock Type"
                                                         }
                                                     }
                                                 }) 
