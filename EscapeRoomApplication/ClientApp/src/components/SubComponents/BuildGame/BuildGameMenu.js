@@ -9,7 +9,7 @@ export class BuildGameMenu extends Component {
 
     render() {
         return (
-            <div>
+            <div className="buildGameMenu">
                 <h1>BUILD GAME MENU</h1>
                 <div>
                     <button onClick={this.editGame}> <PageLink

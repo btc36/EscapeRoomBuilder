@@ -262,7 +262,7 @@ export class PropNLocations extends Component {
         var puzzles = this.state.puzzles;
         var propNLocations = this.state.propNLocations;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
@@ -278,19 +278,21 @@ export class PropNLocations extends Component {
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
                 <h3>Props/Locations</h3>
-                <button> <PageLink
+                <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
-                /></button>
+                />
                 <button onClick={this.addLine}>Add New Prop/Location</button>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Parent</td>
                                 <td>Access Puzzle</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>

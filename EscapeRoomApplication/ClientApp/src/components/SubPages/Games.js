@@ -73,15 +73,15 @@ export class Games extends Component {
         console.log("GAMES", this.state.games);
         var selectGameFunction = this.selectGame;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
                     <Loader />
                 }
-                <h3>Games</h3>
+                <h3 className="pageTitle">Games</h3>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>

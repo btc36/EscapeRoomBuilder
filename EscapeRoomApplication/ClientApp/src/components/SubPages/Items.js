@@ -248,7 +248,7 @@ export class Items extends Component {
         var removeLineFunction = this.removeLineConfirm;
         var locations = this.state.locations;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
@@ -264,18 +264,20 @@ export class Items extends Component {
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
                 <h3>Items</h3>
-                <button> <PageLink
+                <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
-                /></button>
+                />
                 <button onClick={this.addLine}>Add New Item</button>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Location</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>

@@ -85,125 +85,127 @@ export default class App extends Component {
     }
 
   render () {
-    return (
-        <Layout
-            gameName={this.state.gameName}
-        >
-        <Route exact path='/' component={() => (
-                <Home
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    setGameId={this.setGameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-        <Route path='/build-game' component={() => (
-                <BuildGame
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    setGameId={this.setGameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-        <Route path='/run-game' component={() => (
-                <RunGame
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-        <Route path='/games' component={() => (
-                <Games
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    games={this.state.games}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                    setGameId={this.setGameId}
-                />
-            )}
-        />
-        <Route path='/items' component={() => (
-                <Items
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-        <Route path='/locks' component={() => (
-                <Locks
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
+      return (
+        <div>
+            <Layout
+                gameName={this.state.gameName}
+            >
+            <Route exact path='/' component={() => (
+                    <Home
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        setGameId={this.setGameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
             />
-            <Route path='/lockTypes' component={() => (
-                <LockTypes
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
+            <Route path='/build-game' component={() => (
+                    <BuildGame
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        setGameId={this.setGameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
             />
-        <Route path='/media' component={() => (
-                <Media
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
+            <Route path='/run-game' component={() => (
+                    <RunGame
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+            <Route path='/games' component={() => (
+                    <Games
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        games={this.state.games}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                        setGameId={this.setGameId}
+                    />
+                )}
+            />
+            <Route path='/items' component={() => (
+                    <Items
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+            <Route path='/locks' component={() => (
+                    <Locks
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
                 />
-            )}
-        />
-        <Route path='/props' component={() => (
-                <PropNLocations
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
+                <Route path='/lockTypes' component={() => (
+                    <LockTypes
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
                 />
-            )}
-        />
-        <Route path='/puzzles' component={() => (
-                <Puzzles
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-        <Route path='/stages' component={() => (
-                <Stages
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    gameId={this.state.gameId}
-                    makeRESTCall={this.makeRESTCall}
-                    FrontEndDAO={this.FrontEndDAO}
-                />
-            )}
-        />
-      </Layout>
+            <Route path='/media' component={() => (
+                    <Media
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+            <Route path='/props' component={() => (
+                    <PropNLocations
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+            <Route path='/puzzles' component={() => (
+                    <Puzzles
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+            <Route path='/stages' component={() => (
+                    <Stages
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        gameId={this.state.gameId}
+                        makeRESTCall={this.makeRESTCall}
+                        FrontEndDAO={this.FrontEndDAO}
+                    />
+                )}
+            />
+              </Layout>
+        </div>
     );
   }
 }

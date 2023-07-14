@@ -8,7 +8,7 @@ export class CreateNewGame extends Component {
 
     render() {
         return (
-            <div>
+            <div className="createNewGame">
                 <h1>Build Game</h1>
                 <label>
                     <p>Name</p>

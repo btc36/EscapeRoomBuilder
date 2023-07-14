@@ -16,12 +16,12 @@ export class Clues extends Component {
         var puzzleId = this.props.puzzleId;
         var puzzleName = this.props.puzzleName;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 <textarea className="descriptionInput" id="newClue" type="text" rows="5" cols="60" name="clue"></textarea>
                 <button onClick={() => { this.props.addClue(puzzleId, puzzleName)}}>Submit New Clue</button>
                 <h3>Existing Clues</h3>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <tbody>
                             {
                                 this.props.clues.map(function (clue, idx) {

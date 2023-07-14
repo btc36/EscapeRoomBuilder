@@ -215,7 +215,7 @@ export class Stages extends Component {
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
@@ -231,17 +231,19 @@ export class Stages extends Component {
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
                 <h3>Stages</h3>
-                <button> <PageLink
+                <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
-                /></button>
+                />
                 <button onClick={this.addLine}>Add New Stage</button>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>

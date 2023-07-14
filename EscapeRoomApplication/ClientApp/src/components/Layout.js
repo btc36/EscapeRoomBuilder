@@ -8,7 +8,7 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div>
+      <div className="layout">
             <h1>Escape Room Builder - {this.props.gameName}</h1>
             <PageLink
                 linkURL={""}

@@ -444,7 +444,7 @@ export class Puzzles extends Component {
         var stages = this.state.stages;
         var items = this.state.items;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
@@ -459,14 +459,14 @@ export class Puzzles extends Component {
                     isErrorMessage={this.state.isErrorMessage}
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
-                <h3>Puzzles</h3>
-                <button> <PageLink
+                <h3 className="pageTitle">Puzzles</h3>
+                <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
-                /></button>
-                <button onClick={this.addLine}>Add New Puzzle</button>
+                />
+                <button className="addNewButton" onClick={this.addLine}>Add New Puzzle</button>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>
@@ -474,6 +474,9 @@ export class Puzzles extends Component {
                                 <td>Lock</td>
                                 <td>Stage</td>
                                 <td>Items</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>

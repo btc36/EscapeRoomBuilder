@@ -253,7 +253,7 @@ export class Locks extends Component {
         var removeLineFunction = this.removeLineConfirm;
         var lockTypes = this.state.lockTypes;
         return (
-            <div>
+            <div className="escapeRoomPage">
                 {
                     this.state.loading
                     &&
@@ -269,19 +269,21 @@ export class Locks extends Component {
                     dialogFullScreen={this.state.dialogFullScreen}
                 />
                 <h3>Locks</h3>
-                <button> <PageLink
+                <PageLink
                     linkURL={"build-game"}
                     linkText={"Back"}
-                /></button>
+                />
                 <button onClick={this.addLine}>Add New Lock</button>
                 <div>
-                    <table>
+                    <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Combo</td>
                                 <td>Lock Type</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>

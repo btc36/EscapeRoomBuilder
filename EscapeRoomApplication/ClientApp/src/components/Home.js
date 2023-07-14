@@ -13,15 +13,17 @@ export class Home extends Component {
 
   render () {
     return (
-        <div>
+        <div className="mainPageLinks">
             <PageLink
                 linkURL={"build-game"}
                 linkText={"Create a New Game"}
             />
+            <br/>
             <PageLink
                 linkURL={"run-game"}
                 linkText={"Run a Game"}
             />
+            <br />
             <PageLink
                 linkURL={"games"}
                 linkText={"See Existing Games"}
