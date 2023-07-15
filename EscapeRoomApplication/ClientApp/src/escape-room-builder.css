@@ -1,4 +1,6 @@
 /* Use a single css file so that formatting is consitent throughout. Makes classes reusable*/
+
+
 .pageLink {
     align-self: center;
     background-color: #fff;
@@ -89,15 +91,7 @@ h1 {
 }
 
 .escapeRoomPage {
-    position: fixed;
-    left: 50%;
-    top: 70%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
     text-align: center;
-    width:100%;
 }
 
 .escapeRoomPage button {
@@ -165,6 +159,7 @@ h1 {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     width: 100%;
     text-align: left;
+    overflow-y: scroll;
 }
 
 .escapeRoomPageTable thead tr {
