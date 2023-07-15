@@ -153,13 +153,20 @@ h1 {
 .escapeRoomPageTable {
     border-collapse: collapse;
     margin: 25px 0;
-    font-size: 0.9em;
+    font-size: .9em;
     font-family: sans-serif;
-    min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     width: 100%;
     text-align: left;
+    display: block;
+    height: 500px;
     overflow-y: scroll;
+    white-space: nowrap;
+}
+
+.escapeRoomPageTable thead th {
+    position: sticky; /* make the table heads sticky */
+    top: 0px; /* table head will be placed from the top of the table and sticks to it */
 }
 
 .escapeRoomPageTable thead tr {
@@ -168,17 +175,23 @@ h1 {
     text-align: left;
 }
 
-.escapeRoomPageTable th,
-.escapeRoomPageTable td {
-    padding: 12px 15px;
-}
+    .escapeRoomPageTable th,
+    .escapeRoomPageTable td {
+        padding: 12px 15px;
+        width: 100%;
+    }
 
-.escapeRoomPageTable tbody tr {
-    border-bottom: 1px solid;
-}
+    .escapeRoomPageTable tbody tr {
+        border-bottom: 1px solid;
+    }
+
 
 .escapeRoomPageTable tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+    background-color: deepskyblue;
+}
+
+.escapeRoomPageTable tbody tr:nth-of-type(odd) {
+    background-color: cornflowerblue;
 }
 
 .escapeRoomPageTable tbody tr:last-of-type {
