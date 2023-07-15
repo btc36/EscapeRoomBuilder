@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Cookies } from 'react-cookie';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
@@ -16,6 +17,7 @@ import { FrontEndDAO } from './FrontEndDAO';
 
 import './escape-room-builder.css'
 
+const cookies = new Cookies();
 export default class App extends Component {
     static displayName = App.name;
     constructor(props) {
@@ -23,17 +25,20 @@ export default class App extends Component {
         this.state = {
             userId: '1',
             userName: 'Ben Cookson',
-            gameId: 0,
-            gameName: 'Nuclear Reactor',
+            gameId: cookies.get('gameId') || null,
+            gameName: cookies.get('gameName') || null,
             games: []
         };
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
-        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall,this.state.userId,this.state.gameId);
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);
+        
     }
 
 
-    setGameId(gameId,gameName, games=[]) {
+    setGameId(gameId, gameName, games = []) {
+        cookies.set('gameId', gameId);
+        cookies.set('gameName', gameName);
         this.setState({
             gameId: gameId,
             gameName: gameName,

@@ -483,8 +483,14 @@ namespace EscapeRoomApplication
                         {
                             lock_type = reader.GetInt32("lock_type");
                         }
+                        int location = -1;
+                        int location_index = reader.GetOrdinal("location");
+                        if (!reader.IsDBNull(location_index))
+                        {
+                            location = reader.GetInt32("location");
+                        }
                         int game = reader.GetInt32("game");
-                        Lock myLock = new Lock(lockId,combo,lock_type,description,name,game);
+                        Lock myLock = new Lock(lockId,combo,lock_type,description,name,game,location);
                         myResponse.Locks.Add(myLock);
                     }
                 }
@@ -495,6 +501,11 @@ namespace EscapeRoomApplication
                 myResponse = getLockTypes(connection, parameters, myResponse);
                 myResponse.gotLockTypes = true;
             }
+            if (!myResponse.gotProps)
+            {
+                myResponse = getPropNLocations(connection, parameters, myResponse);
+                myResponse.gotProps = true;
+            }
             return myResponse;
         }
         //addStage
@@ -503,7 +514,7 @@ namespace EscapeRoomApplication
             using (connection)
             {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO locks (name, description, lock_type, game, combo) VALUES (@value1, @value2, @value3, @value4, @value5)";
+                string sqlQuery = "INSERT INTO locks (name, description, lock_type, game, combo, location) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
@@ -514,6 +525,7 @@ namespace EscapeRoomApplication
                     command.Parameters.AddWithValue("@value3", parameters.lockTypeId);
                     command.Parameters.AddWithValue("@value4", parameters.gameId);
                     command.Parameters.AddWithValue("@value5", parameters.combo);
+                    command.Parameters.AddWithValue("@value6", parameters.propId);
                     command.ExecuteNonQuery();
                     // Execute the insert command
 
@@ -555,7 +567,7 @@ namespace EscapeRoomApplication
             else
             {
                 sqlQuery = "UPDATE locks " +
-                    "SET name=@value2,description=@value3,lock_type=@value4,game=@value5,combo=@value6 " +
+                    "SET name=@value2,description=@value3,lock_type=@value4,game=@value5,combo=@value6,location=@value7 " +
                     "WHERE id_locks = @value1";
             }
 
@@ -569,6 +581,7 @@ namespace EscapeRoomApplication
                     command.Parameters.AddWithValue("@value4", parameters.lockTypeId);
                     command.Parameters.AddWithValue("@value5", parameters.gameId);
                     command.Parameters.AddWithValue("@value6", parameters.combo);
+                    command.Parameters.AddWithValue("@value7", parameters.propId);
                 }
                 try
                 {
@@ -795,6 +808,18 @@ namespace EscapeRoomApplication
                 command.ExecuteNonQuery();
             }
             //Items later
+            sqlQuery = "UPDATE items SET location = NULL WHERE location = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.propId);
+                command.ExecuteNonQuery();
+            }
+            sqlQuery = "UPDATE locks SET location = NULL WHERE location = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.propId);
+                command.ExecuteNonQuery();
+            }
         }
 
         public DAOResponseObject updatePropNLocation(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)

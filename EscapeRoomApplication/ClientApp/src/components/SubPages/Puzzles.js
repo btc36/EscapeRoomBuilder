@@ -32,7 +32,8 @@ export class Puzzles extends Component {
                         value: "",
                         selectionList: [],
                         id: "id_locks",
-                        title: "Lock"
+                        title: "Lock",
+                        additional_values: ['combo'],
                     },
                     stage: {
                         value: "",
@@ -271,6 +272,7 @@ export class Puzzles extends Component {
                         value: "",
                         id: "id_locks",
                         selectionList: this.state.locks,
+                        additional_values: ['combo'],
                         title: 'Lock'
                     },
                     stage: {
@@ -522,6 +524,7 @@ export class Puzzles extends Component {
                                                             value: puzzle.lock_solved,
                                                             id: 'id_locks',
                                                             selectionList: locks,
+                                                            additional_values: ['combo'],
                                                             title: "Lock"
                                                         },
                                                         stage: {

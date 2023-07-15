@@ -8,7 +8,7 @@ export class Games extends Component {
         super(props);
         this.state = {
             games: this.props.games,
-            loading: true
+            loading: false
         }
         this.getGames = this.getGames.bind(this);
         this.selectGame = this.selectGame.bind(this);

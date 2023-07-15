@@ -56,7 +56,7 @@ h1 {
 }
 
 .selected {
-    background-color: pink;
+    background-color: pink !important;
 }
 
 .dataEntry {

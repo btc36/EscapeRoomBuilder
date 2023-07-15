@@ -14,6 +14,7 @@ export class Locks extends Component {
         this.state = {
             locks: [],
             lockTypes: [],
+            locations: [],
             showDialog: false,
             dialogTitle: "",
             dialogContent: "",
@@ -29,6 +30,12 @@ export class Locks extends Component {
                         selectionList: [],
                         id: "id_lock_types",
                         title: "Lock Type"
+                    },
+                    location: {
+                        value: "",
+                        selectionList: [],
+                        id: "id_props",
+                        title: "Location"
                     }
                 }
             },
@@ -98,9 +105,11 @@ export class Locks extends Component {
         var gameInfo = await this.props.FrontEndDAO.getLocks();
         var editData = this.state.editData;
         editData.additionalSelections.lockType.selectionList = gameInfo.lockTypes;
+        editData.additionalSelections.location.selectionList = gameInfo.propNLocations;
         this.setState({
             locks: gameInfo.locks,
             lockTypes: gameInfo.lockTypes,
+            locations: gameInfo.propNLocations,
             editData: editData
         })
         this.stopLoading();
@@ -151,6 +160,7 @@ export class Locks extends Component {
         })
     }
 
+
     removeLineConfirm(removeData) {
         this.showConfirm(
             "Remove Lock",
@@ -174,20 +184,20 @@ export class Locks extends Component {
         }
     }
 
-    editLine(editData) {
+    editLine(editData, copy=false) {
         console.log("EDIT DATA", editData);
         this.setState({
             editData: editData
         })
-        setTimeout(this.editLineCallback);
+        setTimeout(() => { this.editLineCallback (copy)});
     }
 
-    editLineCallback() {
+    editLineCallback(copy) {
         this.setState({
             showDialog: true,
             dialogFullScreen: true,
             actionDialog: true,
-            editing: true,
+            editing: !copy,
             dialogContent: <DataEntry
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
@@ -236,6 +246,12 @@ export class Locks extends Component {
                         id: "id_lock_types",
                         selectionList: this.state.lockTypes,
                         title: "Lock Type"
+                    },
+                    location: {
+                        value: "",
+                        selectionList: this.state.locations,
+                        id: "id_props",
+                        title: "Location"
                     }
                 }
             },
@@ -255,6 +271,7 @@ export class Locks extends Component {
         var editLineFunction = this.editLine;
         var removeLineFunction = this.removeLineConfirm;
         var lockTypes = this.state.lockTypes;
+        var locations = this.state.locations;
         return (
             <div className="escapeRoomPage">
                 {
@@ -285,6 +302,8 @@ export class Locks extends Component {
                                 <td>Description</td>
                                 <td>Combo</td>
                                 <td>Lock Type</td>
+                                <td>Location</td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
@@ -301,6 +320,13 @@ export class Locks extends Component {
                                             break;
                                         }
                                     }
+                                    var locationName;
+                                    for (var i in locations) {
+                                        if (locations[i].id_props == lock.location) {
+                                            locationName = locations[i].name;
+                                            break;
+                                        }
+                                    }
                                     console.log("MY LOCK TYPE NAME", lockTypeName);
                                     return (
                                         <tr key={lock.id_locks}>
@@ -308,6 +334,31 @@ export class Locks extends Component {
                                             <td>{lock.description}</td>
                                             <td>{lock.combo}</td>
                                             <td>{lockTypeName}</td>
+                                            <td>{locationName}</td>
+                                            <td><button onClick={() => {
+                                                editLineFunction({
+                                                    lineId: lock.id_locks,
+                                                    name: lock.name,
+                                                    description: lock.description,
+                                                    additionalInputs: {
+                                                        combo: lock.combo
+                                                    },
+                                                    additionalSelections: {
+                                                        lockType: {
+                                                            value: lock.lock_type,
+                                                            id: 'id_lock_types',
+                                                            selectionList: lockTypes,
+                                                            title: "Lock Type"
+                                                        },
+                                                        location: {
+                                                            value: lock.location,
+                                                            id: 'id_props',
+                                                            selectionList: locations,
+                                                            title: "Location"
+                                                        }
+                                                    }
+                                                }) 
+                                            }}>EDIT</button></td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: lock.id_locks,
@@ -324,8 +375,8 @@ export class Locks extends Component {
                                                             title: "Lock Type"
                                                         }
                                                     }
-                                                }) 
-                                            }}>EDIT</button></td>
+                                                },true)
+                                            }}>COPY</button></td>
                                             <td><button onClick={() => {
                                                 removeLineFunction({
                                                     name: lock.name,

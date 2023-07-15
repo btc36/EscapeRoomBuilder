@@ -12,7 +12,7 @@ export class DataEntry extends Component {
         this.getDefaultValue = this.getDefaultValue.bind(this);
     }
 
-    translateDataToSelect(selectionList, selectId, defaultValues) {
+    translateDataToSelect(selectionList, selectId, defaultValues, additionalValues) {
         console.log("selectionList", selectionList);
         console.log("DEFAULT VALUE", defaultValues);
         var translatedData = [];
@@ -31,8 +31,14 @@ export class DataEntry extends Component {
                 //Dont give selected options as an option
                 continue;
             }
+            var label = selectionList[i].name;
+            if (additionalValues) {
+                for (var j in additionalValues) {
+                    label += (" - " + selectionList[i][additionalValues[j]]);
+                }
+            }
             translatedData.push({
-                label: selectionList[i].name,
+                label: label,
                 value: value
             })
         }
@@ -120,9 +126,12 @@ export class DataEntry extends Component {
                 </label>
                 {
                     extraInputs.map(function (extraInput, idx) {
+                        var inputCapitalized =
+                            extraInput.charAt(0).toUpperCase()
+                            + extraInput.slice(1)
                         return (
                             <div>
-                                <b>{extraInput}</b>
+                                <b>{inputCapitalized}</b>
                                 <textarea className="additionalInput" value={editData.additionalInputs[extraInput]} onChange={(e) => { updateEditDataFunction(e, extraInput, "extraInput") }} type="text" rows="5" cols="60" name={extraInput}></textarea>
                             </div>
                         )
@@ -139,7 +148,7 @@ export class DataEntry extends Component {
                                 <div className="selectOption">
                                     <b>{selectOptionTitle}</b>
                                     <Select
-                                    options={translateDataToSelectFunction(selectionList, selectId, defaultValue)}
+                                    options={translateDataToSelectFunction(selectionList, selectId, defaultValue, editData.additionalSelections[selectOption].additional_values )}
                                         touchUi={false}
                                         onChange={(e, instance) => { translateFromSelectFunction(e, selectOption)}}
                                         defaultValue={defaultValue}

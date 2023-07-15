@@ -339,7 +339,8 @@ export class FrontEndDAO {
             name: editData.name,
             description: editData.description,
             combo: editData.additionalInputs.combo,
-            lockTypeId: editData.additionalSelections.lockType.value
+            lockTypeId: editData.additionalSelections.lockType.value,
+            propId: editData.additionalSelections.location.value
         };
         await this.makeRESTCall(
             'escaperoomdao?methodName=updateLock&parameters=' + JSON.stringify(parameters),
@@ -367,7 +368,8 @@ export class FrontEndDAO {
             name: editData.name,
             description: editData.description,
             combo: editData.additionalInputs.combo,
-            lockTypeId: editData.additionalSelections.lockType.value
+            lockTypeId: editData.additionalSelections.lockType.value,
+            propId: editData.additionalSelections.location.value
         };
         await this.makeRESTCall(
             'escaperoomdao?methodName=addLock&parameters=' + JSON.stringify(parameters),

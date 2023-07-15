@@ -2,7 +2,7 @@
 {
     public class Lock
     {
-        public Lock(int id_locks, string combo, int lock_type, string description, string name, int game)
+        public Lock(int id_locks, string combo, int lock_type, string description, string name, int game, int location)
         {
             this.id_locks = id_locks;
             this.combo = combo;
@@ -10,6 +10,7 @@
             this.description = description;
             this.name = name;
             this.game = game;
+            this.location = location;
         }
 
         public int id_locks { get; set; }
@@ -18,5 +19,6 @@
         public string description { get; set; }
         public string name { get; set; }
         public int game { get; set; }
+        public int location { get; set; }
     }
 }
