@@ -122,6 +122,7 @@ export class LockTypes extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Add New Lock Type"
             />
         })
     }
@@ -167,6 +168,7 @@ export class LockTypes extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Edit Lock Type"
             />
         })
     }

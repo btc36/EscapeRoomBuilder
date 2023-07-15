@@ -91,9 +91,9 @@ export class FrontEndDAO {
             'escaperoomdao?methodName=addGame&parameters=' + JSON.stringify(parameters),
             'get',
             null,
-            (addGameInfo) => {
-                console.log("TESTING", addGameInfo);
-                addGameInfo = addGameInfo;
+            (addGameResponse) => {
+                console.log("TESTING", addGameResponse);
+                addGameInfo = addGameResponse;
             },
             (title, error) => {
                 console.log('Check Version Num Error:', error);
@@ -103,7 +103,7 @@ export class FrontEndDAO {
                 console.log("Nothing to see here");
             }
         );
-        return addGameInfo;
+        return addGameInfo.insertedId;
     }
 
     async getStages() {

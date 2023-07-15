@@ -23,7 +23,7 @@ export default class App extends Component {
         this.state = {
             userId: '1',
             userName: 'Ben Cookson',
-            gameId: '1',
+            gameId: 0,
             gameName: 'Nuclear Reactor',
             games: []
         };
@@ -39,6 +39,7 @@ export default class App extends Component {
             gameName: gameName,
             games: games
         })
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, gameId);
     }
 
     async makeRESTCall(URL, method, body, responseFunction, errorFunction, finalFunction) {

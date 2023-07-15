@@ -151,6 +151,7 @@ export class PropNLocations extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Add New Prop"
             />
         })
     }
@@ -196,6 +197,7 @@ export class PropNLocations extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Edit Prop"
             />
         })
     }

@@ -63,10 +63,12 @@ h1 {
     position: absolute;
     left: 50%;
     top: 50%;
+    padding: 10px 50px 10px 50px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 25px;
+    background-color: lightgreen;
 }
 
 .dataEntry input {
@@ -76,10 +78,16 @@ h1 {
 
 .dataEntry button {
     width: 100%;
+    margin-top:20px;
 }
 
-.descriptionInput {
+.addClue {
+    display: flex;
+    flex-direction: column;
+}
 
+.clueInput {
+    width: 100%;
 }
 
 .additionalInput {
@@ -159,7 +167,7 @@ h1 {
     width: 100%;
     text-align: left;
     display: block;
-    height: 500px;
+    max-height: 500px;
     overflow-y: scroll;
     white-space: nowrap;
 }
@@ -215,12 +223,14 @@ h1 {
 .createNewGame {
     position: absolute;
     left: 50%;
-    top: 30%;
+    top: 40%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .createNewGame p {

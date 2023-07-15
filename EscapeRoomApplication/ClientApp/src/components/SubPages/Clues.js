@@ -17,9 +17,13 @@ export class Clues extends Component {
         var puzzleName = this.props.puzzleName;
         return (
             <div className="escapeRoomPage">
-                <textarea className="descriptionInput" id="newClue" type="text" rows="5" cols="60" name="clue"></textarea>
-                <button onClick={() => { this.props.addClue(puzzleId, puzzleName)}}>Submit New Clue</button>
-                <h3>Existing Clues</h3>
+                <div className="addClue">
+                    <h3>New Clue</h3>
+                    <textarea className="descriptionInput" id="newClue" type="text" rows="5" cols="60" name="clue"></textarea>
+                    <button onClick={() => { this.props.addClue(puzzleId, puzzleName) }}>Submit New Clue</button>
+                </div>
+                <br/>
+                {this.props.clues.length > 0 && <h3>Existing Clues</h3>}
                 <div>
                     <table className="escapeRoomPageTable">
                         <tbody>

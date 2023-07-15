@@ -20,13 +20,13 @@ export class BuildGame extends Component {
         this.setState(inputObject)
     }
 
-    addNewGame() {
+    async addNewGame() {
         var gameName = this.state.gameName;
         var gameDescription = this.state.gameDescription;
         if (!gameName || !gameDescription) {
             alert("Please enter a game name and game description");
         }
-        var newGameId = this.props.FrontEndDAO.addGame(this.props.userId, gameName, gameDescription);
+        var newGameId = await this.props.FrontEndDAO.addGame(this.props.userId, gameName, gameDescription);
         this.props.setGameId(newGameId,gameName);
     }
 
@@ -46,3 +46,4 @@ export class BuildGame extends Component {
     );
   }
 }
+    

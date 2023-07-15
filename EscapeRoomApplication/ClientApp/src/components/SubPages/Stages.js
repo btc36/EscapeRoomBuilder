@@ -123,6 +123,7 @@ export class Stages extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Add New Stage"
             />
         })
     }
@@ -168,6 +169,7 @@ export class Stages extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Edit Stage"
             />
         })
     }

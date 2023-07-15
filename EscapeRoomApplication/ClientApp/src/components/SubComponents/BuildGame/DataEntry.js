@@ -109,6 +109,7 @@ export class DataEntry extends Component {
         var selectOptions = editData.additionalSelections ? Object.keys(editData.additionalSelections) : [];
         return (
             <div className="dataEntry">
+                <h1>{this.props.dataEntryTitle}</h1>
                 <label>
                     <b>Name</b>
                     <input className="nameInput" value={this.props.editData.name} onChange={(e) => { this.props.updateEditData(e, 'name') }} type="text" />

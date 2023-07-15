@@ -175,6 +175,7 @@ export class Puzzles extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Add New Puzzle"
             />
         })
     }
@@ -220,6 +221,7 @@ export class Puzzles extends Component {
                 editData={this.state.editData}
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
+                dataEntryTitle="Edit Puzzle"
             />
         })
     }
