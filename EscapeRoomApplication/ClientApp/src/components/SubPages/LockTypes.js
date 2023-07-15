@@ -20,7 +20,7 @@ export class LockTypes extends Component {
             isErrorMessage: false,
             editData: {},
             editing: true,
-            loading: false,
+            loading: true,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -86,6 +86,7 @@ export class LockTypes extends Component {
         this.setState({
             lockTypes: gameInfo.lockTypes
         })
+        this.stopLoading();
     }
 
     closeDialog(a, b) {

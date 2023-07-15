@@ -37,7 +37,7 @@ export class PropNLocations extends Component {
                 }
             },
             editing: true,
-            loading: false,
+            loading: true,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -108,6 +108,7 @@ export class PropNLocations extends Component {
             puzzles: gameInfo.puzzles,
             editData: editData
         })
+        this.stopLoading();
     }
 
     closeDialog(a, b) {

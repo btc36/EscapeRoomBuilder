@@ -50,7 +50,7 @@ export class Puzzles extends Component {
                 }
             },
             editing: true,
-            loading: false,
+            loading: true,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -131,6 +131,7 @@ export class Puzzles extends Component {
             stages: gameInfo.stages,
             editData: editData
         })
+        this.stopLoading();
     }
 
 

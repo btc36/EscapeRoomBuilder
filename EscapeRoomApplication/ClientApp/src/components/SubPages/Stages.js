@@ -20,7 +20,7 @@ export class Stages extends Component {
             isErrorMessage: false,
             editData: {},
             editing: true,
-            loading: false,
+            loading: true
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -87,6 +87,7 @@ export class Stages extends Component {
         this.setState({
             stages: gameInfo.stages
         })
+        this.stopLoading();
     }
 
     closeDialog(a,b) {

@@ -33,7 +33,7 @@ export class Locks extends Component {
                 }
             },
             editing: true,
-            loading: false,
+            loading: true,
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -103,6 +103,7 @@ export class Locks extends Component {
             lockTypes: gameInfo.lockTypes,
             editData: editData
         })
+        this.stopLoading();
     }
 
     closeDialog(a, b) {

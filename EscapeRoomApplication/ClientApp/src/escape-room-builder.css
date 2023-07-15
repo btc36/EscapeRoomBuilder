@@ -164,10 +164,6 @@ h1 {
     white-space: nowrap;
 }
 
-.escapeRoomPageTable thead th {
-    position: sticky; /* make the table heads sticky */
-    top: 0px; /* table head will be placed from the top of the table and sticks to it */
-}
 
 .escapeRoomPageTable thead tr {
     background-color: #009879;
@@ -175,11 +171,18 @@ h1 {
     text-align: left;
 }
 
-    .escapeRoomPageTable th,
-    .escapeRoomPageTable td {
-        padding: 12px 15px;
-        width: 100%;
-    }
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%
+}
+
+
+.escapeRoomPageTable th,
+.escapeRoomPageTable td {
+    padding: 12px 15px;
+    width: 100%;
+}
 
     .escapeRoomPageTable tbody tr {
         border-bottom: 1px solid;

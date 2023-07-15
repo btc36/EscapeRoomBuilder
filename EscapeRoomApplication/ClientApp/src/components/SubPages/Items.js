@@ -31,7 +31,7 @@ export class Items extends Component {
                 }
             },
             editing: true,
-            loading: false,
+            loading: true
         }
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -100,7 +100,8 @@ export class Items extends Component {
             items: gameInfo.items,
             locations: gameInfo.propNLocations,
             editData: editData
-        })
+        });
+        this.stopLoading();
     }
 
     closeDialog(a, b) {
@@ -269,8 +270,8 @@ export class Items extends Component {
                     linkText={"Back"}
                 />
                 <button onClick={this.addLine}>Add New Item</button>
-                <div>
-                    <table className="escapeRoomPageTable">
+                <div className="escapeRoomPageTable">
+                    <table>
                         <thead>
                             <tr>
                                 <td>Name</td>
