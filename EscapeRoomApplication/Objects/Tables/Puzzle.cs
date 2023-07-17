@@ -2,7 +2,7 @@
 {
     public class Puzzle
     {
-        public Puzzle(int id_puzzles, string name, string description, int stage, int _lock)
+        public Puzzle(int id_puzzles, string name, string description, int stage, int _lock, int game)
         {
             this.id_puzzles = id_puzzles;
             this.name = name;
@@ -17,5 +17,6 @@
         public int stage { get; set; }
         public int lock_solved { get; set; }
         public int completion_code { get; set; }
+        public int game { get; set; }
     }
 }

@@ -301,21 +301,11 @@ namespace EscapeRoomApplication
         public DAOResponseObject getPuzzles(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             myResponse.Puzzles.Clear();
-            if (!myResponse.gotStages)
-            {
-                myResponse = getStages(connection, parameters, myResponse);
-            }
-            var stages = myResponse.Stages;
-            var stageIds = new List<long>();
-            for(var i = 0; i < stages.Count; i++)
-            {
-                var stage = stages[i];
-                stageIds.Add(stage.id_stages);
-            }
-            var stageIdList = String.Join(",", stageIds);
-            string sqlQuery = "SELECT * FROM puzzles WHERE stage IN (" + stageIdList + ")";
+            string sqlQuery = "SELECT * FROM puzzles WHERE game = @value1";
             using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
+
+                command.Parameters.AddWithValue("@value1", parameters.gameId);
                 // Execute the query and obtain a MySqlDataReader
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
@@ -323,17 +313,23 @@ namespace EscapeRoomApplication
                     while (reader.Read())
                     {
                         // Access columns by name or index
+                        int gameId = reader.GetInt32("game");
                         int puzzleId = reader.GetInt32("id_puzzles");
                         string name = reader.GetString("name");
                         string description = reader.GetString("description");
-                        int stageId = reader.GetInt32("stage");
+                        int stageId = -1;
+                        int stage_index = reader.GetOrdinal("stage");
+                        if (!reader.IsDBNull(stage_index))
+                        {
+                            stageId = reader.GetInt32("stage");
+                        }
                         int lockId = -1;
                         int lock_index = reader.GetOrdinal("lock_solved");
                         if (!reader.IsDBNull(lock_index))
                         {
                             lockId = reader.GetInt32("lock_solved");
                         }
-                        Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId);
+                        Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId, gameId);
                         myResponse.Puzzles.Add(puzzle);
                     }
                 }
@@ -361,7 +357,7 @@ namespace EscapeRoomApplication
             using (connection)
             {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5)";
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
@@ -369,9 +365,24 @@ namespace EscapeRoomApplication
                     // Add parameters for the values to be inserted
                     command.Parameters.AddWithValue("@value1", parameters.name);
                     command.Parameters.AddWithValue("@value2", parameters.description);
-                    command.Parameters.AddWithValue("@value3", parameters.stageId);
-                    command.Parameters.AddWithValue("@value4", parameters.lockId);
-                    command.Parameters.AddWithValue("@value5", getPuzzleCode(connection));
+                    if (parameters.stageId == -1)
+                    {
+                        command.Parameters.AddWithValue("@value3", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value3", parameters.stageId);
+                    }
+                    if (parameters.lockId == -1)
+                    {
+                        command.Parameters.AddWithValue("@value4", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value4", parameters.lockId);
+                    }
+                    command.Parameters.AddWithValue("@value5", parameters.gameId);
+                    command.Parameters.AddWithValue("@value6", getPuzzleCode(connection));
                     command.ExecuteNonQuery();
                     // Execute the insert command
 
@@ -439,8 +450,22 @@ namespace EscapeRoomApplication
                 {
                     command.Parameters.AddWithValue("@value2", parameters.name);
                     command.Parameters.AddWithValue("@value3", parameters.description);
-                    command.Parameters.AddWithValue("@value4", parameters.stageId);
-                    command.Parameters.AddWithValue("@value5", parameters.lockId);
+                    if (parameters.stageId == -1)
+                    {
+                        command.Parameters.AddWithValue("@value4", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value4", parameters.stageId);
+                    }
+                    if (parameters.lockId == -1)
+                    {
+                        command.Parameters.AddWithValue("@value5", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value5", parameters.lockId);
+                    }
                 }
                 try
                 {

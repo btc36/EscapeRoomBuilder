@@ -29,14 +29,14 @@ export class Puzzles extends Component {
                 description: "",
                 additionalSelections: {
                     lock: {
-                        value: "",
+                        value: -1,
                         selectionList: [],
                         id: "id_locks",
                         title: "Lock",
                         additional_values: ['combo'],
                     },
                     stage: {
-                        value: "",
+                        value: -1,
                         selectionList: [],
                         id: "id_stages",
                         title: "Stage"
@@ -229,7 +229,7 @@ export class Puzzles extends Component {
 
     submitLineEntry() {
         var editData = this.state.editData;
-        if (!editData.name || !editData.description || !editData.additionalSelections.stage.value || !editData.additionalSelections.lock.value) {
+        if (!editData.name || !editData.description) {
             alert('You cannot have empty values');
             return;
         }
@@ -269,14 +269,14 @@ export class Puzzles extends Component {
                 description: "",
                 additionalSelections: {
                     lock: {
-                        value: "",
+                        value: -1,
                         id: "id_locks",
                         selectionList: this.state.locks,
                         additional_values: ['combo'],
                         title: 'Lock'
                     },
                     stage: {
-                        value: "",
+                        value: -1,
                         id: "id_stages",
                         selectionList: this.state.stages,
                         title: "Stage"
