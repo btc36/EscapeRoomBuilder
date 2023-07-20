@@ -292,8 +292,8 @@ export class Items extends Component {
                                 <td></td>
                                 <td></td>
                                 <td>Name</td>
-                                <td>Description</td>
                                 <td>Location</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -330,8 +330,8 @@ export class Items extends Component {
                                                 })
                                             }}>REMOVE</button></td>
                                             <td>{item.name}</td>
-                                            <td>{item.description}</td>
                                             <td>{locationName}</td>
+                                            <td>{item.description}</td>
                                         </tr>
                                     )
                                 })

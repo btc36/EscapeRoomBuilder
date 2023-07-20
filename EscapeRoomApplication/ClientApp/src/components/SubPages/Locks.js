@@ -322,10 +322,10 @@ export class Locks extends Component {
                                 <td></td>
                                 <td></td>
                                 <td>Name</td>
-                                <td>Description</td>
                                 <td>Combo</td>
                                 <td>Lock Type</td>
                                 <td>Location</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -399,10 +399,10 @@ export class Locks extends Component {
                                                 })
                                             }}>REMOVE</button></td>
                                             <td>{lock.name}</td>
-                                            <td>{lock.description}</td>
                                             <td>{lock.combo}</td>
                                             <td>{lockTypeName}</td>
                                             <td>{locationName}</td>
+                                            <td>{lock.description}</td>
                                         </tr>
                                     )
                                 })

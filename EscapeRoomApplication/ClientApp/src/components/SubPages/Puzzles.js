@@ -265,11 +265,15 @@ export class Puzzles extends Component {
     }
 
     async submitLineEntryCallback() {
-        if (this.state.editing) {
-            var updateResponse = await this.props.FrontEndDAO.updatePuzzle(this.state.editData);
+        var editData = this.state.editData;
+        if (editData.additionalSelections.puzzleItem.value == -1) {
+            editData.additionalSelections.puzzleItem.value = null;
         }
+        if (this.state.editing) {
+            var updateResponse = await this.props.FrontEndDAO.updatePuzzle(editData);
+        }   
         else {
-            var updateResponse = await this.props.FrontEndDAO.addPuzzle(this.state.editData);
+            var updateResponse = await this.props.FrontEndDAO.addPuzzle(editData);
         }
         console.log("PUZZLE TYPES RESPONSE", updateResponse)
         if (updateResponse.success) {
@@ -505,10 +509,10 @@ export class Puzzles extends Component {
                                 <td></td>
                                 <td></td>
                                 <td>Name</td>
-                                <td>Description</td>
                                 <td>Lock</td>
                                 <td>Stage</td>
                                 <td>Items</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -572,10 +576,10 @@ export class Puzzles extends Component {
                                                 })
                                             }}>REMOVE</button></td>
                                             <td>{puzzle.name}</td>
-                                            <td>{puzzle.description}</td>
                                             <td>{lockName}</td>
                                             <td>{stageName}</td>
                                             <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
+                                            <td>{puzzle.description}</td>
                                         </tr>
                                     )
                                 })

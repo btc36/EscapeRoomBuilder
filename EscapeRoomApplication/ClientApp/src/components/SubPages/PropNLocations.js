@@ -312,9 +312,9 @@ export class PropNLocations extends Component {
                                 <td></td>
                                 <td></td>
                                 <td>Name</td>
-                                <td>Description</td>
                                 <td>Parent</td>
                                 <td>Access Puzzle</td>
+                                <td>Description</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -368,9 +368,9 @@ export class PropNLocations extends Component {
                                                 })
                                             }}>REMOVE</button></td>
                                             <td>{propNLocation.name}</td>
-                                            <td>{propNLocation.description}</td>
                                             <td>{parentName}</td>
                                             <td>{puzzleName}</td>
+                                            <td>{propNLocation.description}</td>
                                         </tr>
                                     )
                                 })
