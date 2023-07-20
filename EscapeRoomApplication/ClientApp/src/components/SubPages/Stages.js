@@ -18,6 +18,7 @@ export class Stages extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {},
             editData: {},
             editing: true,
             loading: true
@@ -92,7 +93,8 @@ export class Stages extends Component {
 
     closeDialog(a,b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
 
     }
@@ -243,10 +245,10 @@ export class Stages extends Component {
                     <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -254,8 +256,6 @@ export class Stages extends Component {
                                 this.state.stages.map(function (stage, idx) {
                                     return (
                                         <tr key={stage.id_stages}>
-                                            <td>{stage.name}</td>
-                                            <td>{stage.description}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: stage.id_stages,
@@ -271,6 +271,8 @@ export class Stages extends Component {
                                                     lineId: stage.id_stages
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{stage.name}</td>
+                                            <td>{stage.description}</td>
                                         </tr>
                                     )
                                 })

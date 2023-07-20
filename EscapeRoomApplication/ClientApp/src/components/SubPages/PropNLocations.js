@@ -18,6 +18,24 @@ export class PropNLocations extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {
+                name: "",
+                description: "",
+                additionalSelections: {
+                    puzzle: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_puzzles",
+                        title: "Puzzle"
+                    },
+                    parent: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_props",
+                        title: "Location"
+                    }
+                }
+            },
             editData: {
                 name: "",
                 description: "",
@@ -113,7 +131,8 @@ export class PropNLocations extends Component {
 
     closeDialog(a, b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
     }
 
@@ -290,12 +309,12 @@ export class PropNLocations extends Component {
                     <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Parent</td>
                                 <td>Access Puzzle</td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -321,10 +340,6 @@ export class PropNLocations extends Component {
                                     console.log("MY parent NAME", parentName);
                                     return (
                                         <tr key={propNLocation.id_props}>
-                                            <td>{propNLocation.name}</td>
-                                            <td>{propNLocation.description}</td>
-                                            <td>{parentName}</td>
-                                            <td>{puzzleName}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: propNLocation.id_props,
@@ -352,6 +367,10 @@ export class PropNLocations extends Component {
                                                     lineId: propNLocation.id_props
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{propNLocation.name}</td>
+                                            <td>{propNLocation.description}</td>
+                                            <td>{parentName}</td>
+                                            <td>{puzzleName}</td>
                                         </tr>
                                     )
                                 })

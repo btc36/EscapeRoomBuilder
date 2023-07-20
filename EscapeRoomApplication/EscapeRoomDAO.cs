@@ -34,6 +34,7 @@ namespace EscapeRoomApplication
             EscapeRoomDAOFunctions["addItem"] = this.addItem;
             EscapeRoomDAOFunctions["updateItem"] = this.updateItem;
             EscapeRoomDAOFunctions["getPuzzleItems"] = this.getPuzzleItems;
+            EscapeRoomDAOFunctions["updatePuzzleItems"] = this.updatePuzzleItems;
             EscapeRoomDAOFunctions["getClues"] = this.getClues;
             EscapeRoomDAOFunctions["addClue"] = this.addClue;
             EscapeRoomDAOFunctions["updateClue"] = this.updateClue;
@@ -153,33 +154,30 @@ namespace EscapeRoomApplication
 
         public DAOResponseObject addGame(MySqlConnection connection,DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
+            // Create a SQL query for the insert statement
+            string sqlQuery = "INSERT INTO games (user, name, description) VALUES (@value1, @value2, @value3)";
+
+            // Create a MySqlCommand object with the SQL query and connection
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
-                // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO games (user, name, description) VALUES (@value1, @value2, @value3)";
+                // Add parameters for the values to be inserted
+                command.Parameters.AddWithValue("@value1", parameters.userId);
+                command.Parameters.AddWithValue("@value2", parameters.name);
+                command.Parameters.AddWithValue("@value3", parameters.description);
+                command.ExecuteNonQuery();
+                // Execute the insert command
 
-                // Create a MySqlCommand object with the SQL query and connection
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                long lastInsertedId = command.LastInsertedId;
+                if(lastInsertedId == null)
                 {
-                    // Add parameters for the values to be inserted
-                    command.Parameters.AddWithValue("@value1", parameters.userId);
-                    command.Parameters.AddWithValue("@value2", parameters.name);
-                    command.Parameters.AddWithValue("@value3", parameters.description);
-                    command.ExecuteNonQuery();
-                    // Execute the insert command
-
-                    long lastInsertedId = command.LastInsertedId;
-                    if(lastInsertedId == null)
-                    {
-                        myResponse.success = false;
-                        myResponse.message = "Failure to insert into the table";
-                    }
-                    else
-                    {
-                        myResponse.insertedId = lastInsertedId;
-                    }
-
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table";
                 }
+                else
+                {
+                    myResponse.insertedId = lastInsertedId;
+                }
+
             }
             return myResponse;
         }
@@ -215,8 +213,6 @@ namespace EscapeRoomApplication
         //addStage
         public DAOResponseObject addStage(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
-            {
                 // Create a SQL query for the insert statement
                 string sqlQuery = "INSERT INTO stages (name,description, stage_order, game) VALUES (@value1, @value2, @value3, @value4)";
 
@@ -241,8 +237,6 @@ namespace EscapeRoomApplication
                     {
                         myResponse = getStages(connection, parameters, myResponse);
                     }
-
-                }
             }
             return myResponse;
         }
@@ -349,13 +343,16 @@ namespace EscapeRoomApplication
                     myResponse = getPuzzleItems(connection, parameters, myResponse);
                     myResponse.gotPuzzleItems = true;
                 }
+                if (!myResponse.gotStages)
+                {
+                    myResponse = getStages(connection, parameters, myResponse);
+                    myResponse.gotStages = true;
+                }
             }
             return myResponse;
         }
         public DAOResponseObject addPuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
-            {
                 // Create a SQL query for the insert statement
                 string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
 
@@ -401,7 +398,6 @@ namespace EscapeRoomApplication
                     }
 
                 }
-            }
             return myResponse;
         }
 
@@ -536,37 +532,34 @@ namespace EscapeRoomApplication
         //addStage
         public DAOResponseObject addLock(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
+            // Create a SQL query for the insert statement
+            string sqlQuery = "INSERT INTO locks (name, description, lock_type, game, combo, location) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
+
+            // Create a MySqlCommand object with the SQL query and connection
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
-                // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO locks (name, description, lock_type, game, combo, location) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
+                // Add parameters for the values to be inserted
+                command.Parameters.AddWithValue("@value1", parameters.name);
+                command.Parameters.AddWithValue("@value2", parameters.description);
+                command.Parameters.AddWithValue("@value3", parameters.lockTypeId);
+                command.Parameters.AddWithValue("@value4", parameters.gameId);
+                command.Parameters.AddWithValue("@value5", parameters.combo);
+                command.Parameters.AddWithValue("@value6", parameters.propId);
+                command.ExecuteNonQuery();
+                // Execute the insert command
 
-                // Create a MySqlCommand object with the SQL query and connection
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                long lastInsertedId = command.LastInsertedId;
+                if (lastInsertedId == null)
                 {
-                    // Add parameters for the values to be inserted
-                    command.Parameters.AddWithValue("@value1", parameters.name);
-                    command.Parameters.AddWithValue("@value2", parameters.description);
-                    command.Parameters.AddWithValue("@value3", parameters.lockTypeId);
-                    command.Parameters.AddWithValue("@value4", parameters.gameId);
-                    command.Parameters.AddWithValue("@value5", parameters.combo);
-                    command.Parameters.AddWithValue("@value6", parameters.propId);
-                    command.ExecuteNonQuery();
-                    // Execute the insert command
-
-                    long lastInsertedId = command.LastInsertedId;
-                    if (lastInsertedId == null)
-                    {
-                        myResponse.success = false;
-                        myResponse.message = "Failure to insert into the table";
-                    }
-                    else
-                    {
-                        myResponse.insertedId = lastInsertedId;
-                        myResponse = getLocks(connection, parameters, myResponse);
-                    }
-
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table";
                 }
+                else
+                {
+                    myResponse.insertedId = lastInsertedId;
+                    myResponse = getLocks(connection, parameters, myResponse);
+                }
+
             }
             return myResponse;
         }
@@ -606,7 +599,14 @@ namespace EscapeRoomApplication
                     command.Parameters.AddWithValue("@value4", parameters.lockTypeId);
                     command.Parameters.AddWithValue("@value5", parameters.gameId);
                     command.Parameters.AddWithValue("@value6", parameters.combo);
-                    command.Parameters.AddWithValue("@value7", parameters.propId);
+                    if (parameters.propId == -1)
+                    {
+                        command.Parameters.AddWithValue("@value7", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value7", parameters.propId);
+                    }
                 }
                 try
                 {
@@ -651,8 +651,7 @@ namespace EscapeRoomApplication
         //addStage
         public DAOResponseObject addLockType(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
-            {
+
                 // Create a SQL query for the insert statement
                 string sqlQuery = "INSERT INTO lockTypes (name, description) VALUES (@value1, @value2)";
 
@@ -678,7 +677,6 @@ namespace EscapeRoomApplication
                     }
 
                 }
-            }
             return myResponse;
         }
 
@@ -776,50 +774,48 @@ namespace EscapeRoomApplication
         }
         public DAOResponseObject addPropNLocation(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
+
+            // Create a SQL query for the insert statement
+            string sqlQuery = "INSERT INTO props (name, description, parent_prop, access_puzzle,game) VALUES (@value1, @value2, @value3, @value4, @value5)";
+
+            // Create a MySqlCommand object with the SQL query and connection
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
-                // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO props (name, description, parent_prop, access_puzzle,game) VALUES (@value1, @value2, @value3, @value4, @value5)";
-
-                // Create a MySqlCommand object with the SQL query and connection
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                // Add parameters for the values to be inserted
+                command.Parameters.AddWithValue("@value1", parameters.name);
+                command.Parameters.AddWithValue("@value2", parameters.description);
+                if (parameters.parent == -1)
                 {
-                    // Add parameters for the values to be inserted
-                    command.Parameters.AddWithValue("@value1", parameters.name);
-                    command.Parameters.AddWithValue("@value2", parameters.description);
-                    if (parameters.parent == -1)
-                    {
-                        command.Parameters.AddWithValue("@value3", null);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@value3", parameters.parent);
-                    }
-                    if (parameters.puzzleId == -1)
-                    {
-                        command.Parameters.AddWithValue("@value4", null);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@value4", parameters.puzzleId);
-                    }
-                    command.Parameters.AddWithValue("@value5", parameters.gameId);
-                    command.ExecuteNonQuery();
-                    // Execute the insert command
-
-                    long lastInsertedId = command.LastInsertedId;
-                    if (lastInsertedId == null)
-                    {
-                        myResponse.success = false;
-                        myResponse.message = "Failure to insert into the table";
-                    }
-                    else
-                    {
-                        myResponse.insertedId = lastInsertedId;
-                        myResponse = getPropNLocations(connection, parameters, myResponse);
-                    }
-
+                    command.Parameters.AddWithValue("@value3", null);
                 }
+                else
+                {
+                    command.Parameters.AddWithValue("@value3", parameters.parent);
+                }
+                if (parameters.puzzleId == -1)
+                {
+                    command.Parameters.AddWithValue("@value4", null);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@value4", parameters.puzzleId);
+                }
+                command.Parameters.AddWithValue("@value5", parameters.gameId);
+                command.ExecuteNonQuery();
+                // Execute the insert command
+
+                long lastInsertedId = command.LastInsertedId;
+                if (lastInsertedId == null)
+                {
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table";
+                }
+                else
+                {
+                    myResponse.insertedId = lastInsertedId;
+                    myResponse = getPropNLocations(connection, parameters, myResponse);
+                }
+
             }
             return myResponse;
         }
@@ -943,8 +939,7 @@ namespace EscapeRoomApplication
         }
         public DAOResponseObject addItem(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
-            {
+
                 // Create a SQL query for the insert statement
                 string sqlQuery = "INSERT INTO items (name, description, location, game) VALUES (@value1, @value2, @value3, @value4)";
 
@@ -979,7 +974,6 @@ namespace EscapeRoomApplication
                     }
 
                 }
-            }
             return myResponse;
         }
 
@@ -1098,14 +1092,18 @@ namespace EscapeRoomApplication
             //Get list of current puzzle item
             //compare to new list
             //add/remove whats different
-            for (int i = 0; i < puzzleItemsToAdd.Count; i++)
+            for (int j = 0; j < puzzleItemsToAdd.Count; j++)
             {
-                PuzzleItem toAdd = new PuzzleItem(parameters.puzzleId, puzzleItemsToAdd[i]);
+                Console.Write("REMOVING PUZZLE ITEM");
+                Console.Write(j);
+                PuzzleItem toAdd = new PuzzleItem(parameters.puzzleId, puzzleItemsToAdd[j]);
                 parameters.puzzleItem = toAdd;
                 addPuzzleItem(connection, parameters, myResponse);
             }
             for (int i = 0; i < puzzleItemsToRemove.Count; i++)
             {
+                Console.Write("REMOVING PUZZLE ITEM");
+                Console.Write(i);
                 PuzzleItem toRemove = new PuzzleItem(parameters.puzzleId, puzzleItemsToRemove[i]);
                 parameters.puzzleItem = toRemove;
                 removePuzzleItem(connection, parameters, myResponse);
@@ -1116,31 +1114,28 @@ namespace EscapeRoomApplication
 
         public DAOResponseObject addPuzzleItem(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
+            // Create a SQL query for the insert statement
+            string sqlQuery = "INSERT INTO puzzleitem (item, puzzle, game) VALUES (@value1, @value2, @value3)";
+
+            // Create a MySqlCommand object with the SQL query and connection
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
-                // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzleitem (item, puzzle, game) VALUES (@value1, @value2, @value3)";
+                // Add parameters for the values to be inserted
+                command.Parameters.AddWithValue("@value1", parameters.puzzleItem.item);
+                command.Parameters.AddWithValue("@value2", parameters.puzzleItem.puzzle);
+                command.Parameters.AddWithValue("@value3", parameters.gameId);
+                command.ExecuteNonQuery();
+                // Execute the insert command
 
-                // Create a MySqlCommand object with the SQL query and connection
-                using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+                long lastInsertedId = command.LastInsertedId;
+                if (lastInsertedId == null)
                 {
-                    // Add parameters for the values to be inserted
-                    command.Parameters.AddWithValue("@value1", parameters.puzzleItem.item);
-                    command.Parameters.AddWithValue("@value2", parameters.puzzleItem.puzzle);
-                    command.Parameters.AddWithValue("@value3", parameters.gameId);
-                    command.ExecuteNonQuery();
-                    // Execute the insert command
-
-                    long lastInsertedId = command.LastInsertedId;
-                    if (lastInsertedId == null)
-                    {
-                        myResponse.success = false;
-                        myResponse.message = "Failure to insert into the table";
-                    }
-                    else
-                    {
-                        myResponse.insertedId = lastInsertedId;
-                    }
+                    myResponse.success = false;
+                    myResponse.message = "Failure to insert into the table";
+                }
+                else
+                {
+                    myResponse.insertedId = lastInsertedId;
                 }
             }
             return myResponse;
@@ -1194,8 +1189,6 @@ namespace EscapeRoomApplication
         }
         public DAOResponseObject addClue(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
-            using (connection)
-            {
                 // Create a SQL query for the insert statement
                 string sqlQuery = "INSERT INTO clues(clue_text, clue_puzzle) VALUES (@value1, @value2)";
 
@@ -1220,7 +1213,6 @@ namespace EscapeRoomApplication
                     }
 
                 }
-            }
             return myResponse;
         }
 

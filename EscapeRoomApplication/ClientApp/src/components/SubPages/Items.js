@@ -18,6 +18,18 @@ export class Items extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {
+                name: "",
+                description: "",
+                additionalSelections: {
+                    location: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_props",
+                        title: "Location"
+                    }
+                }
+            }, 
             editData: {
                 name: "",
                 description: "",
@@ -106,7 +118,8 @@ export class Items extends Component {
 
     closeDialog(a, b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
     }
 
@@ -276,11 +289,11 @@ export class Items extends Component {
                     <table>
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Location</td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -295,9 +308,6 @@ export class Items extends Component {
                                     }
                                     return (
                                         <tr key={item.id_props}>
-                                            <td>{item.name}</td>
-                                            <td>{item.description}</td>
-                                            <td>{locationName}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: item.id_items,
@@ -319,6 +329,9 @@ export class Items extends Component {
                                                     lineId: item.id_items
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{item.name}</td>
+                                            <td>{item.description}</td>
+                                            <td>{locationName}</td>
                                         </tr>
                                     )
                                 })

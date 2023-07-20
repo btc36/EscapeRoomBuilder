@@ -24,6 +24,32 @@ export class Puzzles extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {
+                name: "",
+                description: "",
+                additionalSelections: {
+                    lock: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_locks",
+                        title: "Lock",
+                        additional_values: ['combo'],
+                    },
+                    stage: {
+                        value: -1,
+                        selectionList: [],
+                        id: "id_stages",
+                        title: "Stage"
+                    },
+                    puzzleItem: {
+                        value: "",
+                        id: 'id_items',
+                        selectionList: [],
+                        multiSelect: true,
+                        title: "Required Items"
+                    }
+                }
+            },
             editData: {
                 name: "",
                 description: "",
@@ -138,7 +164,8 @@ export class Puzzles extends Component {
 
     closeDialog(a, b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
     }
 
@@ -474,14 +501,14 @@ export class Puzzles extends Component {
                     <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Lock</td>
                                 <td>Stage</td>
                                 <td>Items</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -508,12 +535,7 @@ export class Puzzles extends Component {
                                     console.log("MY STAGE NAME", stageName);
                                     return (
                                         <tr key={puzzle.id_puzzles}>
-                                            <td>{puzzle.name}</td>
-                                            <td>{puzzle.description}</td>
-                                            <td>{lockName}</td>
-                                            <td>{stageName}</td>
-                                            <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
-                                            <td><button onClick={() => { getCluesFunction(puzzle.id_puzzles,puzzle.name)}}>Clues</button></td>
+                                            <td><button onClick={() => { getCluesFunction(puzzle.id_puzzles, puzzle.name) }}>Clues</button></td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: puzzle.id_puzzles,
@@ -549,6 +571,11 @@ export class Puzzles extends Component {
                                                     lineId: puzzle.id_puzzles
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{puzzle.name}</td>
+                                            <td>{puzzle.description}</td>
+                                            <td>{lockName}</td>
+                                            <td>{stageName}</td>
+                                            <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
                                         </tr>
                                     )
                                 })

@@ -20,6 +20,25 @@ export class Locks extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {
+                additionalInputs: {
+                    combo: ""
+                },
+                additionalSelections: {
+                    lockType: {
+                        value: "",
+                        selectionList: [],
+                        id: "id_lock_types",
+                        title: "Lock Type"
+                    },
+                    location: {
+                        value: "",
+                        selectionList: [],
+                        id: "id_props",
+                        title: "Location"
+                    }
+                }
+            },
             editData: {
                 additionalInputs: {
                     combo: ""
@@ -117,7 +136,8 @@ export class Locks extends Component {
 
     closeDialog(a, b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
     }
 
@@ -298,14 +318,14 @@ export class Locks extends Component {
                     <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
                                 <td>Combo</td>
                                 <td>Lock Type</td>
                                 <td>Location</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -330,11 +350,6 @@ export class Locks extends Component {
                                     console.log("MY LOCK TYPE NAME", lockTypeName);
                                     return (
                                         <tr key={lock.id_locks}>
-                                            <td>{lock.name}</td>
-                                            <td>{lock.description}</td>
-                                            <td>{lock.combo}</td>
-                                            <td>{lockTypeName}</td>
-                                            <td>{locationName}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: lock.id_locks,
@@ -357,7 +372,7 @@ export class Locks extends Component {
                                                             title: "Location"
                                                         }
                                                     }
-                                                }) 
+                                                })
                                             }}>EDIT</button></td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
@@ -375,7 +390,7 @@ export class Locks extends Component {
                                                             title: "Lock Type"
                                                         }
                                                     }
-                                                },true)
+                                                }, true)
                                             }}>COPY</button></td>
                                             <td><button onClick={() => {
                                                 removeLineFunction({
@@ -383,6 +398,11 @@ export class Locks extends Component {
                                                     lineId: lock.id_locks
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{lock.name}</td>
+                                            <td>{lock.description}</td>
+                                            <td>{lock.combo}</td>
+                                            <td>{lockTypeName}</td>
+                                            <td>{locationName}</td>
                                         </tr>
                                     )
                                 })

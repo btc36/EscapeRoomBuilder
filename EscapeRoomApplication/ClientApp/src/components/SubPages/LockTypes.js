@@ -18,6 +18,7 @@ export class LockTypes extends Component {
             dialogContent: "",
             actionDialog: false,
             isErrorMessage: false,
+            defaultEditData: {},
             editData: {},
             editing: true,
             loading: true,
@@ -91,7 +92,8 @@ export class LockTypes extends Component {
 
     closeDialog(a, b) {
         this.setState({
-            showDialog: false
+            showDialog: false,
+            editData: this.state.defaultEditData
         });
 
     }
@@ -243,10 +245,10 @@ export class LockTypes extends Component {
                     <table className="escapeRoomPageTable">
                         <thead>
                             <tr>
+                                <td></td>
+                                <td></td>
                                 <td>Name</td>
                                 <td>Description</td>
-                                <td></td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -254,8 +256,6 @@ export class LockTypes extends Component {
                                 this.state.lockTypes.map(function (lockType, idx) {
                                     return (
                                         <tr key={lockType.id_lock_types}>
-                                            <td>{lockType.name}</td>
-                                            <td>{lockType.description}</td>
                                             <td><button onClick={() => {
                                                 editLineFunction({
                                                     lineId: lockType.id_lock_types,
@@ -271,6 +271,8 @@ export class LockTypes extends Component {
                                                     lineId: lockType.id_lock_types
                                                 })
                                             }}>REMOVE</button></td>
+                                            <td>{lockType.name}</td>
+                                            <td>{lockType.description}</td>
                                         </tr>
                                     )
                                 })
