@@ -27,14 +27,22 @@ export default class App extends Component {
             userName: 'Ben Cookson',
             gameId: cookies.get('gameId') || null,
             gameName: cookies.get('gameName') || null,
-            games: []
+            games: [],
+            runningGame: false
         };
+        this.startRunningGame = this.startRunningGame.bind(this);
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
         this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);
         
     }
 
+
+    startRunningGame() {
+        this.setState({
+            runningGame: true
+        });
+    }
 
     setGameId(gameId, gameName, games = []) {
         cookies.set('gameId', gameId);
@@ -94,7 +102,8 @@ export default class App extends Component {
       return (
         <div>
             <Layout
-                gameName={this.state.gameName}
+                  gameName={this.state.gameName}
+                  runningGame={this.state.runningGame}
             >
             <Route exact path='/' component={() => (
                     <Home
@@ -125,6 +134,8 @@ export default class App extends Component {
                         gameId={this.state.gameId}
                         makeRESTCall={this.makeRESTCall}
                         FrontEndDAO={this.FrontEndDAO}
+                        startRunningGame={this.startRunningGame}
+                        runningGame={this.state.runningGame}
                     />
                 )}
             />

@@ -20,11 +20,6 @@ export class Home extends Component {
             />
             <br/>
             <PageLink
-                linkURL={"run-game"}
-                linkText={"Run a Game"}
-            />
-            <br />
-            <PageLink
                 linkURL={"games"}
                 linkText={"See Existing Games"}
             />

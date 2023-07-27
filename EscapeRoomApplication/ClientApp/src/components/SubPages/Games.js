@@ -111,7 +111,7 @@ export class Games extends Component {
                                     linkText={"Edit"}
                                 /></button>
                                 <button> <PageLink
-                                    linkURL={"play-game"}
+                                    linkURL={"run-game"}
                                     linkText={"Play"}
                                 /></button>
                                 {

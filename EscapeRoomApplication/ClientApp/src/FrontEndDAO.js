@@ -447,6 +447,7 @@ export class FrontEndDAO {
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
             stageId: editData.additionalSelections.stage.value,
+            parent: editData.additionalSelections.parentPuzzle.value,
             puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split(",") : []
         };
         await this.makeRESTCall(
@@ -476,6 +477,7 @@ export class FrontEndDAO {
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
             stageId: editData.additionalSelections.stage.value,
+            parent: editData.additionalSelections.parentPuzzle.value,
             puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split() : []
         };
         await this.makeRESTCall(

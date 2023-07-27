@@ -10,10 +10,14 @@ export class Layout extends Component {
     return (
       <div className="layout">
             <h1>Escape Room Builder - {this.props.gameName}</h1>
-            <PageLink
-                linkURL={""}
-                linkText={"Home"}
-            />
+            {
+                !this.props.runningGame
+                &&
+                <PageLink
+                    linkURL={""}
+                    linkText={"Home"}
+                />
+            }
             <Container>
               {this.props.children}
             </Container>

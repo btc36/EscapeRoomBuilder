@@ -76,6 +76,9 @@ export class DataEntry extends Component {
         for (var i in selectionList) {
             if (selectionList[i][selectId] == value) {
                 name = selectionList[i].name;
+                if(selectionList[i].combo != null) {
+                    name += "-" + selectionList[i].combo
+                }
                 break;
             }
         }

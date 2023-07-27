@@ -242,7 +242,7 @@ export class Items extends Component {
                     location: {
                         value: -1,
                         id: "id_props",
-                        selectionList: this.state.propNLocations,
+                        selectionList: this.state.locations,
                         title: "Location"
                     }
                 }

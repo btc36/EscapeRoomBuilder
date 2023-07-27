@@ -323,7 +323,14 @@ namespace EscapeRoomApplication
                         {
                             lockId = reader.GetInt32("lock_solved");
                         }
-                        Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId, gameId);
+                        int parent = -1;
+                        int parent_index = reader.GetOrdinal("parent_puzzle");
+                        if (!reader.IsDBNull(parent_index))
+                        {
+                            parent = reader.GetInt32("parent_puzzle");
+                        }
+
+                        Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId, gameId, parent);
                         myResponse.Puzzles.Add(puzzle);
                     }
                 }
@@ -354,7 +361,7 @@ namespace EscapeRoomApplication
         public DAOResponseObject addPuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code, parent_puzzle) VALUES (@value1, @value2, @value3, @value4, @value5, @value6, @value7)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
@@ -380,6 +387,14 @@ namespace EscapeRoomApplication
                     }
                     command.Parameters.AddWithValue("@value5", parameters.gameId);
                     command.Parameters.AddWithValue("@value6", getPuzzleCode(connection));
+                    if (parameters.parent == -1)
+                    {
+                        command.Parameters.AddWithValue("@value7", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value7", parameters.parent);
+                    }
                     command.ExecuteNonQuery();
                     // Execute the insert command
 
@@ -404,6 +419,12 @@ namespace EscapeRoomApplication
         public void removePuzzleReferences(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
             var sqlQuery = "UPDATE props SET access_puzzle = NULL WHERE access_puzzle = @value1";
+            using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
+            {
+                command.Parameters.AddWithValue("@value1", parameters.puzzleId);
+                command.ExecuteNonQuery();
+            }
+            sqlQuery = "UPDATE puzzles SET parent_puzzle = NULL WHERE parent_puzzle = @value1";
             using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))
             {
                 command.Parameters.AddWithValue("@value1", parameters.puzzleId);
@@ -434,7 +455,7 @@ namespace EscapeRoomApplication
             else
             {
                 sqlQuery = "UPDATE puzzles " +
-                    "SET name=@value2,description=@value3,stage=@value4,lock_solved=@value5 " +
+                    "SET name=@value2,description=@value3,stage=@value4,lock_solved=@value5,parent_puzzle=@value6 " +
                     "WHERE id_puzzles = @value1";
 
             }
@@ -461,6 +482,14 @@ namespace EscapeRoomApplication
                     else
                     {
                         command.Parameters.AddWithValue("@value5", parameters.lockId);
+                    }
+                    if (parameters.parent == -1)
+                    {
+                        command.Parameters.AddWithValue("@value6", null);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@value6", parameters.parent);
                     }
                 }
                 try
