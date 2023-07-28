@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Countdown from 'react-countdown';
 import { Cookies } from 'react-cookie';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
@@ -28,13 +29,14 @@ export default class App extends Component {
             gameId: cookies.get('gameId') || null,
             gameName: cookies.get('gameName') || null,
             games: [],
-            runningGame: false
+            runningGame: false,
+            countdown: "01:00:00"
         };
         this.startRunningGame = this.startRunningGame.bind(this);
+        this.startTimer = this.startTimer.bind(this);
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
-        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);
-        
+        this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);  
     }
 
 
@@ -43,6 +45,31 @@ export default class App extends Component {
             runningGame: true
         });
     }
+
+    startTimer() {
+        // Random component
+        const Completionist = () => <span>Times Up!!!!!!!</span>;
+
+        // Renderer callback with condition
+        const renderer = ({ hours, minutes, seconds, completed }) => {
+            if (completed) {
+                // Render a completed state
+                return <Completionist />;
+            } else {
+                // Render a countdown
+                return <span>{minutes}:{seconds}</span>;
+            }
+        };
+        var countdown = <Countdown
+            date={Date.now() + 3600000}
+            renderer={renderer}
+            zeroPadTime={2}
+        />
+        this.setState({
+            countdown: countdown
+        });
+    }
+
 
     setGameId(gameId, gameName, games = []) {
         cookies.set('gameId', gameId);
@@ -136,6 +163,8 @@ export default class App extends Component {
                         FrontEndDAO={this.FrontEndDAO}
                         startRunningGame={this.startRunningGame}
                         runningGame={this.state.runningGame}
+                        startTimer={this.startTimer}
+                        countdown={this.state.countdown }
                     />
                 )}
             />

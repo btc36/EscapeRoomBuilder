@@ -47,12 +47,6 @@ export class Puzzles extends Component {
                         selectionList: [],
                         multiSelect: true,
                         title: "Required Items"
-                    },
-                    parentPuzzle: {
-                        value: -1,
-                        id: 'id_puzzles',
-                        selectionList: [],
-                        title: "Parent Puzzle"
                     }
                 }
             },
@@ -79,12 +73,6 @@ export class Puzzles extends Component {
                         selectionList: [],
                         multiSelect: true,
                         title: "Required Items"
-                    },
-                    parentPuzzle: {
-                        value: -1,
-                        id: 'id_puzzles',
-                        selectionList: [],
-                        title: "Parent Puzzle"
                     }
                 }
             },
@@ -162,7 +150,6 @@ export class Puzzles extends Component {
         editData.additionalSelections.lock.selectionList = gameInfo.locks;
         editData.additionalSelections.stage.selectionList = gameInfo.stages;
         editData.additionalSelections.puzzleItem.selectionList = gameInfo.items;
-        editData.additionalSelections.parentPuzzle.selectionList = gameInfo.puzzles;
         this.setState({
             puzzles: gameInfo.puzzles,
             puzzleItems: gameInfo.puzzleItems,
@@ -331,12 +318,6 @@ export class Puzzles extends Component {
                         selectionList: this.state.items,
                         multiSelect: true,
                         title: "Required Items"
-                    },
-                    parentPuzzle: {
-                        value: -1,
-                        id: 'id_puzzles',
-                        selectionList: this.state.puzzles,
-                        title: "Parent Puzzle"
                     }
                 }
             },
@@ -531,7 +512,6 @@ export class Puzzles extends Component {
                                 <td>Name</td>
                                 <td>Lock</td>
                                 <td>Stage</td>
-                                <td>Parent</td>
                                 <td>Items</td>
                                 <td>Description</td>
                             </tr>
@@ -545,7 +525,6 @@ export class Puzzles extends Component {
                                     var stageName;
                                     var lockName;
                                     var lockCombo;
-                                    var parentPuzzleName;
                                     for (var i in locks) {
                                         if (locks[i].id_locks == puzzle.lock_solved) {
                                             lockName = locks[i].name;
@@ -559,12 +538,7 @@ export class Puzzles extends Component {
                                             break;
                                         }
                                     }
-                                    for (var i in puzzles) {
-                                        if (puzzles[i].id_puzzles == puzzle.parent_puzzle) {
-                                            parentPuzzleName = puzzles[i].name;
-                                            break;
-                                        }
-                                    }
+
                                     console.log("MY LOCK NAME", lockName);
                                     console.log("MY STAGE NAME", stageName);
                                     return (
@@ -595,12 +569,6 @@ export class Puzzles extends Component {
                                                             selectionList: items,
                                                             multiSelect: true,
                                                             title: "Required Items"
-                                                        },
-                                                        parentPuzzle: {
-                                                            value: puzzle.parent_puzzle,
-                                                            id: 'id_puzzles',
-                                                            selectionList: puzzles,
-                                                            title: "Parent Puzzle"
                                                         }
                                                     },
                                                 })
@@ -614,7 +582,6 @@ export class Puzzles extends Component {
                                             <td>{puzzle.name}</td>
                                             <td>{lockName ? lockName + "--" + lockCombo : "N/A"}</td>
                                             <td>{stageName}</td>
-                                            <td>{parentPuzzleName}</td>
                                             <td>{puzzleItemDict[puzzle.id_puzzles] ? puzzleItemDict[puzzle.id_puzzles].itemsString : "N/A"}</td>
                                             <td>{puzzle.description}</td>
                                         </tr>

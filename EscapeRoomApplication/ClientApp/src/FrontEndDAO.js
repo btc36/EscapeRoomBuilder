@@ -447,7 +447,6 @@ export class FrontEndDAO {
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
             stageId: editData.additionalSelections.stage.value,
-            parent: editData.additionalSelections.parentPuzzle.value,
             puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split(",") : []
         };
         await this.makeRESTCall(
@@ -477,7 +476,6 @@ export class FrontEndDAO {
             description: editData.description,
             lockId: editData.additionalSelections.lock.value,
             stageId: editData.additionalSelections.stage.value,
-            parent: editData.additionalSelections.parentPuzzle.value,
             puzzleItems: editData.additionalSelections.puzzleItem.value ? editData.additionalSelections.puzzleItem.value.split() : []
         };
         await this.makeRESTCall(
@@ -827,6 +825,29 @@ export class FrontEndDAO {
             }
         );
         return removeClueInfo;
+    }
+
+    async getFullGameInfo() {
+        var getFullGameInfo;
+        var parameters = {
+            gameId: this.gameId
+        };
+        await this.makeRESTCall(
+            'escaperoomdao?methodName=getFullGameInfo&parameters=' + JSON.stringify(parameters),
+            'get',
+            null,
+            (getFullGameInfoResponse) => {
+                console.log("getFullGameInfoResponse", getFullGameInfoResponse);
+                getFullGameInfo = getFullGameInfoResponse;
+            },
+            (title, error) => {
+                //Do we want an error? Without internet, they can't do anything anyway
+            },
+            () => {
+                console.log("Nothing to see here");
+            }
+        );
+        return getFullGameInfo;
     }
 
 }
