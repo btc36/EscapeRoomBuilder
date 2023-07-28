@@ -398,11 +398,16 @@ export class RunGame extends Component {
                 &&
                 <button onClick={this.startTimer}>Start Timer</button>
             }
-            <button onClick={this.getClue}>Get Clue</button>
-            <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
-            <button onClick={this.submitPuzzleCode}>Submit Code</button>
+            {
+                percentComplete < 100
+                &&
+                <div>
+                    <button onClick={this.getClue}>Get Clue</button>
+                    <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
+                    <button onClick={this.submitPuzzleCode}>Submit Code</button>
+                </div>
+            }
             <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
-            
       </div>
     );
   }
