@@ -13,7 +13,7 @@ export class Audio extends React.Component {
                 <audio className="audio-element-failure">
                     <source src="https://audio.code.org/failure1.mp3"></source>
                 </audio>
-                <audio className="audio-element-mi">
+                <audio className="audio-element-victory">
                     <source src="https://www.myinstants.com/media/sounds/taco-bell-bong-sfx.mp3"></source>
                 </audio>
             </div>

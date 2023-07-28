@@ -52,6 +52,12 @@ export default class App extends Component {
 
         // Renderer callback with condition
         const renderer = ({ hours, minutes, seconds, completed }) => {
+            if (seconds < 10) {
+                seconds = '0' + seconds
+            }
+            if (minutes < 10) {
+                minutes = '0' + minutes
+            }
             if (completed) {
                 // Render a completed state
                 return <Completionist />;

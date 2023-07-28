@@ -256,6 +256,10 @@ h1 {
 }
 
 
-.countdown {
+.countdown, .victory-text {
     font-size: 300px;
+}
+
+.runGamePage {
+    text-align: center;
 }

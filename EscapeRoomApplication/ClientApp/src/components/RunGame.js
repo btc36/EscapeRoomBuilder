@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Countdown from 'react-countdown';
 import ProgressBar from "@ramonak/react-progress-bar";
 import { Audio } from './Widgets/Audio';
+import { DialogMessage } from './Widgets/DialogMessage';
+//import { Fireworks } from 'fireworks-js'
+import confetti from 'canvas-confetti';
 export class RunGame extends Component {
 
   constructor(props) {
@@ -17,7 +20,7 @@ export class RunGame extends Component {
           stages: [],
           accessedLocations: [],
           solvablePuzzles: [],
-          solvedPuzzles: [1,2],
+          solvedPuzzles: [1,1,1,1,1,1,1,1,1,1],
           clueDict: {},
           locationsDict: {},
           locationItems: {},
@@ -25,7 +28,13 @@ export class RunGame extends Component {
           puzzleCodeDict: {},
           backpack: [],
           currentStage: "",
-          puzzleCode: ""
+          puzzleCode: "",
+          showDialog: false,
+          dialogTitle: "",
+          dialogContent: "",
+          actionDialog: false,
+          isErrorMessage: false,
+          dialogFullScreen: false
       };
       if (!this.props.runningGame) {
           this.props.startRunningGame();
@@ -35,9 +44,13 @@ export class RunGame extends Component {
       this.getInitalValues = this.getInitalValues.bind(this);
       this.updatePuzzleCode = this.updatePuzzleCode.bind(this);
       this.submitPuzzleCode = this.submitPuzzleCode.bind(this);
+      this.getClue = this.getClue.bind(this);
       this.startTimer = this.startTimer.bind(this);
+      this.startVictory = this.startVictory.bind(this);
+      this.makeConfetti = this.makeConfetti.bind(this);
       this.playFailure = this.playFailure.bind(this);
       this.playSuccess = this.playSuccess.bind(this);
+      this.closeDialog = this.closeDialog.bind(this);
       this.getFullGameInfo();
     }
 
@@ -139,7 +152,6 @@ export class RunGame extends Component {
             var puzzle = puzzles[i];
             puzzleCodeDict[puzzle.puzzle_code] = puzzle.id_puzzles;
         }
-        console.log("MY STUFF")
         this.setState({
             puzzles: puzzles,
             numPuzzles: puzzles.length,
@@ -169,8 +181,9 @@ export class RunGame extends Component {
         var puzzleCode = this.state.puzzleCode;
         var puzzleCodeDict = this.state.puzzleCodeDict;
         var clues = this.state.clues;
+        var solvedPuzzles = this.state.solvedPuzzles;
         var clueDict = {};
-        if (!puzzleCodeDict[puzzleCode]) {
+        if (!puzzleCodeDict[puzzleCode] || solvedPuzzles.indexOf(puzzleCodeDict[puzzleCode].toString()) > -1) {
             this.playFailure();
         }
         else {
@@ -178,7 +191,6 @@ export class RunGame extends Component {
             var puzzle = puzzleCodeDict[puzzleCode];
             var puzzleItemsDict = this.state.puzzleItemsDict; 
             var solvablePuzzles = this.state.solvablePuzzles;
-            var solvedPuzzles = this.state.solvedPuzzles;
             solvedPuzzles.push(puzzle.toString());
             var puzzleIndex = solvablePuzzles.indexOf(puzzle.toString());
             solvablePuzzles.splice(puzzleIndex, 1);
@@ -243,8 +255,70 @@ export class RunGame extends Component {
         })
     }
 
+    getClue() {
+        var clues = this.state.clueDict;
+        var solvablePuzzles = this.state.solvablePuzzles;
+        var givenClues = this.state.givenClues;
+        var clueFound = false;
+        var clueText = '';
+        var defaultClue = "";
+        for (var puzzleId in clues) {
+            var puzzleClues = clues[puzzleId];
+            for (var i in puzzleClues) {
+                var clue = puzzleClues[i];
+                if (!defaultClue) {
+                    defaultClue = clue;
+                }
+                if (givenClues.indexOf(clue) == -1) {
+                    clueFound = true;
+                    clueText = clue;
+                    givenClues.push(clue);
+                    break;
+                }
+            }
+            if (clueFound) {
+                break;
+            }
+        }
+        if (!clueFound) {
+            clueText = defaultClue;
+            givenClues = [clueText];
+        }
+        this.setState({
+            showDialog: true,
+            dialogTitle: "Here is a clue:",
+            dialogContent: <h1>{clueText}</h1>,
+            actionDialog: false,
+            isErrorMessage: false,
+            dialogFullScreen: false,
+            givenClues: givenClues
+        })
+    }
+
     startTimer() {
       this.props.startTimer();
+    }
+
+    makeConfetti() {
+        confetti({
+            particleCount: 100,
+            startVelocity: 30,
+            spread: 360,
+            origin: {
+                x: Math.random(),
+                // since they fall down, start a bit higher than random
+                y: Math.random() - 0.2
+            }
+        });
+    }
+
+    startVictory() {
+        this.makeConfetti();
+        this.makeConfetti();
+        this.makeConfetti();
+        this.makeConfetti();
+        this.makeConfetti();
+        setTimeout(() => { document.getElementById("victory-button").click()},2000);
     }
 
     playFailure() {
@@ -265,9 +339,23 @@ export class RunGame extends Component {
         }
     }
 
+    closeDialog() {
+        this.setState({
+            showDialog: false,
+            dialogTitle: "",
+            dialogContent: "",
+            actionDialog: false,
+            isErrorMessage: false,
+            dialogFullScreen: false
+        })
+    }
+
     render() {
         var percentComplete = (this.state.solvedPuzzles.length / this.state.numPuzzles) * 100;
         percentComplete = Math.round(percentComplete);
+        if (percentComplete == 100) {
+            document.getElementById("victory-button").click();
+        }
         var barColor = '#00FF00';
         if (percentComplete < 50) {
             barColor = '#AA4A44';
@@ -278,22 +366,43 @@ export class RunGame extends Component {
     return (
         <div className="runGamePage">
             <Audio />
-            <h1>Run Game</h1>
-            <div className="countdown">
-                {this.props.countdown}
-            </div>
+            <DialogMessage
+                closeDialog={this.closeDialog}
+                showDialog={this.state.showDialog}
+                dialogTitle={this.state.dialogTitle}
+                dialogContent={this.state.dialogContent}
+                actionDialog={this.state.actionDialog}
+                isErrorMessage={this.state.isErrorMessage}
+                dialogFullScreen={this.state.dialogFullScreen}
+            />
             {
-                this.props.countdown == "01:00:00"
-                &&
-                <button onClick={this.startTimer}>Start Timer</button>
+                percentComplete < 100
+                ?
+                <div className="countdown">
+                {this.props.countdown}
+                </div>
+                :
+                <div>
+                    <h1 className='victory-text'>Winner!!!!</h1>  
+                </div>
             }
-            <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
-            <button onClick={this.submitPuzzleCode}>Submit</button>
+            
             <ProgressBar
                 completed={percentComplete}
                 bgColor={barColor}
                 height={"30px"}
             />
+            <br /><br />
+            {
+                this.props.countdown == "01:00:00"
+                &&
+                <button onClick={this.startTimer}>Start Timer</button>
+            }
+            <button onClick={this.getClue}>Get Clue</button>
+            <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
+            <button onClick={this.submitPuzzleCode}>Submit Code</button>
+            <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
+            
       </div>
     );
   }
