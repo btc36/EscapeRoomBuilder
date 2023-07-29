@@ -179,6 +179,9 @@ export class RunGame extends Component {
 
     submitPuzzleCode() {
         var puzzleCode = this.state.puzzleCode;
+        if (typeof puzzleCode == 'string') {
+            puzzleCode = puzzleCode.toLowerCase();
+        }
         var puzzleCodeDict = this.state.puzzleCodeDict;
         var clues = this.state.clues;
         var solvedPuzzles = this.state.solvedPuzzles;
