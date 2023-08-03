@@ -18,7 +18,7 @@ export class RunGame extends Component {
           clues: [],
           givenClues: [],
           stages: [],
-          accessedLocations: [],
+          unlockedLocations: [],
           solvablePuzzles: [],
           solvedPuzzles: [1,1,1,1,1,1,1,1,1,1],
           clueDict: {},
@@ -51,6 +51,7 @@ export class RunGame extends Component {
       this.playFailure = this.playFailure.bind(this);
       this.playSuccess = this.playSuccess.bind(this);
       this.closeDialog = this.closeDialog.bind(this);
+      this.getTimeElapsed = this.getTimeElapsed.bind(this);
       this.getFullGameInfo();
     }
 
@@ -199,7 +200,7 @@ export class RunGame extends Component {
             solvablePuzzles.splice(puzzleIndex, 1);
             var locations = this.state.locations;
             var backpack = this.state.backpack;
-            var unlockedLocations = [];
+            var unlockedLocations = this.state.unlockedLocations;
             for (var i in locations) {
                 var location = locations[i];
                 if (location.access_puzzle == puzzle) {
@@ -250,6 +251,7 @@ export class RunGame extends Component {
                 solvablePuzzles: solvablePuzzles,
                 solvedPuzzles: solvedPuzzles,
                 backpack: backpack,
+                unlockedLocations: unlockedLocations,
                 clueDict: clueDict
             })
         }
@@ -261,11 +263,15 @@ export class RunGame extends Component {
     getClue() {
         var clues = this.state.clueDict;
         var solvablePuzzles = this.state.solvablePuzzles;
+        var solvedPuzzles = this.state.solvedPuzzles;
         var givenClues = this.state.givenClues;
         var clueFound = false;
         var clueText = '';
         var defaultClue = "";
         for (var puzzleId in clues) {
+            if (solvedPuzzles.indexOf(puzzleId) > -1) {
+                continue;
+            }
             var puzzleClues = clues[puzzleId];
             for (var i in puzzleClues) {
                 var clue = puzzleClues[i];
@@ -284,6 +290,9 @@ export class RunGame extends Component {
             }
         }
         if (!clueFound) {
+            if (!defaultClue) {
+                defaultClue = "You have solved all available puzzles, look for a code to enter.";
+            }
             clueText = defaultClue;
             givenClues = [clueText];
         }
@@ -353,6 +362,37 @@ export class RunGame extends Component {
         })
     }
 
+    getTimeElapsed(startTime) {
+        if (!startTime) {
+            return "N/A";
+        }
+        var dateFuture = Date.now();
+        var dateNow = startTime;
+
+        var seconds = Math.floor((dateFuture - (dateNow)) / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        var days = Math.floor(hours / 24);
+
+        hours = hours - (days * 24);
+        minutes = minutes - (days * 24 * 60) - (hours * 60);
+        seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60);
+        if (hours < 10) {
+            hours = '0' + hours;
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
+        if (seconds < 10) {
+            seconds = '0' + seconds;
+        }
+        var timeElapsed = minutes + ":" + seconds;
+        if (hours != "00") {
+            timeElapsed = hours + ":" + timeElapsed;
+        }
+        return timeElapsed;
+    }
+
     render() {
         var percentComplete = (this.state.solvedPuzzles.length / this.state.numPuzzles) * 100;
         percentComplete = Math.round(percentComplete);
@@ -366,7 +406,9 @@ export class RunGame extends Component {
         else if (percentComplete < 80) {
             barColor = '#FBCEB1';
         }
-    return (
+        var timeElapsed = this.getTimeElapsed(this.props.startTime);
+        return (
+        //SHOW WHAT THE TIME SPENT WAS
         <div className="runGamePage">
             <Audio />
             <DialogMessage
@@ -386,7 +428,8 @@ export class RunGame extends Component {
                 </div>
                 :
                 <div>
-                    <h1 className='victory-text'>Winner!!!!</h1>  
+                        <h1 className='victory-text'>Winner!!!!</h1>
+                        <h3 className='timeelapsed'>You Beat the Game in {timeElapsed}</h3>
                 </div>
             }
             
@@ -409,7 +452,7 @@ export class RunGame extends Component {
                     <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
                     <button onClick={this.submitPuzzleCode}>Submit Code</button>
                 </div>
-            }
+                }
             <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
       </div>
     );

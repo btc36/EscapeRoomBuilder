@@ -30,7 +30,8 @@ export default class App extends Component {
             gameName: cookies.get('gameName') || null,
             games: [],
             runningGame: false,
-            countdown: "01:00:00"
+            countdown: "01:00:00",
+            startTime: null
         };
         this.startRunningGame = this.startRunningGame.bind(this);
         this.startTimer = this.startTimer.bind(this);
@@ -52,6 +53,9 @@ export default class App extends Component {
 
         // Renderer callback with condition
         const renderer = ({ hours, minutes, seconds, completed }) => {
+            if (hours < 10) {
+                hours = '0' + hours;
+            }
             if (seconds < 10) {
                 seconds = '0' + seconds
             }
@@ -63,16 +67,17 @@ export default class App extends Component {
                 return <Completionist />;
             } else {
                 // Render a countdown
-                return <span>{minutes}:{seconds}</span>;
+                return <span>{hours}:{minutes}:{seconds}</span>;
             }
         };
         var countdown = <Countdown
-            date={Date.now() + 3600000}
+            date={Date.now() + 5400000}
             renderer={renderer}
             zeroPadTime={2}
         />
         this.setState({
-            countdown: countdown
+            countdown: countdown,
+            startTime: Date.now()
         });
     }
 
@@ -170,7 +175,8 @@ export default class App extends Component {
                         startRunningGame={this.startRunningGame}
                         runningGame={this.state.runningGame}
                         startTimer={this.startTimer}
-                        countdown={this.state.countdown }
+                        countdown={this.state.countdown}
+                        startTime={this.state.startTime }
                     />
                 )}
             />

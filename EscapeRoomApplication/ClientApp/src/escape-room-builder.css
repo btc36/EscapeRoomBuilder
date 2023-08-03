@@ -260,6 +260,10 @@ h1 {
     font-size: 300px;
 }
 
+.timeelapsed {
+    font-size: 80px;
+}
+
 .runGamePage {
     text-align: center;
 }
