@@ -5,6 +5,9 @@ import { Audio } from './Widgets/Audio';
 import { DialogMessage } from './Widgets/DialogMessage';
 //import { Fireworks } from 'fireworks-js'
 import confetti from 'canvas-confetti';
+
+const ADMIN_PASSWORD = 'admin';
+
 export class RunGame extends Component {
 
   constructor(props) {
@@ -34,7 +37,9 @@ export class RunGame extends Component {
           dialogContent: "",
           actionDialog: false,
           isErrorMessage: false,
-          dialogFullScreen: false
+          dialogFullScreen: false,
+          adminStep: null,
+          adminPassword: ''
       };
       if (!this.props.runningGame) {
           this.props.startRunningGame();
@@ -52,6 +57,11 @@ export class RunGame extends Component {
       this.playSuccess = this.playSuccess.bind(this);
       this.closeDialog = this.closeDialog.bind(this);
       this.getTimeElapsed = this.getTimeElapsed.bind(this);
+      this.openAdminLogin = this.openAdminLogin.bind(this);
+      this.submitAdminPassword = this.submitAdminPassword.bind(this);
+      this.closeAdmin = this.closeAdmin.bind(this);
+      this.adminEndGame = this.adminEndGame.bind(this);
+      this.adminAddTime = this.adminAddTime.bind(this);
       this.getFullGameInfo();
     }
 
@@ -403,6 +413,35 @@ export class RunGame extends Component {
         return timeElapsed;
     }
 
+    openAdminLogin() {
+        this.setState({ adminStep: 'password', adminPassword: '' });
+    }
+
+    submitAdminPassword() {
+        if (this.state.adminPassword === ADMIN_PASSWORD) {
+            this.setState({ adminStep: 'panel', adminPassword: '' });
+        } else {
+            this.setState({ adminPassword: '' });
+            this.playFailure();
+        }
+    }
+
+    closeAdmin() {
+        this.setState({ adminStep: null, adminPassword: '' });
+    }
+
+    adminEndGame() {
+        this.setState({
+            solvedPuzzles: new Array(this.state.numPuzzles).fill(0),
+            adminStep: null,
+            adminPassword: ''
+        });
+    }
+
+    adminAddTime(minutes) {
+        this.props.addTime(minutes);
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (prevState.solvedPuzzles.length !== this.state.solvedPuzzles.length &&
             this.state.numPuzzles > 0 &&
@@ -479,6 +518,51 @@ export class RunGame extends Component {
                 </div>
             }
             <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
+
+            {/* Subtle admin trigger — low opacity, corner of screen */}
+            <button className="admin-corner-btn" onClick={this.openAdminLogin} title="">⚙</button>
+
+            {/* Admin password prompt */}
+            {this.state.adminStep === 'password' && (
+                <div className="admin-overlay" onClick={this.closeAdmin}>
+                    <div className="admin-panel" onClick={e => e.stopPropagation()}>
+                        <h3>Admin Access</h3>
+                        <input
+                            type="password"
+                            value={this.state.adminPassword}
+                            onChange={e => this.setState({ adminPassword: e.target.value })}
+                            placeholder="Password"
+                            onKeyDown={e => e.key === 'Enter' && this.submitAdminPassword()}
+                            autoFocus
+                        />
+                        <div className="admin-panel-actions">
+                            <button onClick={this.submitAdminPassword}>Unlock</button>
+                            <button className="admin-cancel-btn" onClick={this.closeAdmin}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Admin action panel */}
+            {this.state.adminStep === 'panel' && (
+                <div className="admin-overlay" onClick={this.closeAdmin}>
+                    <div className="admin-panel" onClick={e => e.stopPropagation()}>
+                        <h3>Admin Panel</h3>
+                        <div className="admin-panel-actions">
+                            <button
+                                onClick={() => this.adminAddTime(5)}
+                                disabled={!this.props.timerStarted}
+                            >+ 5 Minutes</button>
+                            <button
+                                onClick={() => this.adminAddTime(10)}
+                                disabled={!this.props.timerStarted}
+                            >+ 10 Minutes</button>
+                            <button className="admin-danger-btn" onClick={this.adminEndGame}>End Game</button>
+                            <button className="admin-cancel-btn" onClick={this.closeAdmin}>Close</button>
+                        </div>
+                    </div>
+                </div>
+            )}
       </div>
     );
   }

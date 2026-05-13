@@ -30,11 +30,12 @@ export default class App extends Component {
             gameName: cookies.get('gameName') || null,
             games: [],
             runningGame: false,
-            countdown: "01:00:00",
+            timerEnd: null,
             startTime: null
         };
         this.startRunningGame = this.startRunningGame.bind(this);
         this.startTimer = this.startTimer.bind(this);
+        this.addTime = this.addTime.bind(this);
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
         this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);  
@@ -48,37 +49,16 @@ export default class App extends Component {
     }
 
     startTimer() {
-        // Random component
-        const Completionist = () => <span>Times Up!!!!!!!</span>;
-
-        // Renderer callback with condition
-        const renderer = ({ hours, minutes, seconds, completed }) => {
-            if (hours < 10) {
-                hours = '0' + hours;
-            }
-            if (seconds < 10) {
-                seconds = '0' + seconds
-            }
-            if (minutes < 10) {
-                minutes = '0' + minutes
-            }
-            if (completed) {
-                // Render a completed state
-                return <Completionist />;
-            } else {
-                // Render a countdown
-                return <span>{hours}:{minutes}:{seconds}</span>;
-            }
-        };
-        var countdown = <Countdown
-            date={Date.now() + 5400000}
-            renderer={renderer}
-            zeroPadTime={2}
-        />
         this.setState({
-            countdown: countdown,
+            timerEnd: Date.now() + 5400000,
             startTime: Date.now()
         });
+    }
+
+    addTime(minutes) {
+        if (this.state.timerEnd) {
+            this.setState({ timerEnd: this.state.timerEnd + minutes * 60000 });
+        }
     }
 
 
@@ -137,6 +117,21 @@ export default class App extends Component {
     }
 
   render () {
+      const { timerEnd } = this.state;
+      let countdown;
+      if (timerEnd) {
+          const Completionist = () => <span>Times Up!!!!!!!</span>;
+          const renderer = ({ hours, minutes, seconds, completed }) => {
+              if (hours < 10) hours = '0' + hours;
+              if (seconds < 10) seconds = '0' + seconds;
+              if (minutes < 10) minutes = '0' + minutes;
+              if (completed) return <Completionist />;
+              return <span>{hours}:{minutes}:{seconds}</span>;
+          };
+          countdown = <Countdown date={timerEnd} renderer={renderer} zeroPadTime={2} />;
+      } else {
+          countdown = "01:00:00";
+      }
       return (
         <div>
             <Layout
@@ -175,8 +170,10 @@ export default class App extends Component {
                         startRunningGame={this.startRunningGame}
                         runningGame={this.state.runningGame}
                         startTimer={this.startTimer}
-                        countdown={this.state.countdown}
-                        startTime={this.state.startTime }
+                        countdown={countdown}
+                        startTime={this.state.startTime}
+                        timerStarted={!!timerEnd}
+                        addTime={this.addTime}
                     />
                 )}
             />
