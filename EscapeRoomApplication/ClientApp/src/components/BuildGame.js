@@ -25,9 +25,18 @@ export class BuildGame extends Component {
         var gameDescription = this.state.gameDescription;
         if (!gameName || !gameDescription) {
             alert("Please enter a game name and game description");
+            return;
         }
-        var newGameId = await this.props.FrontEndDAO.addGame(this.props.userId, gameName, gameDescription);
-        this.props.setGameId(newGameId,gameName);
+        try {
+            var newGameId = await this.props.FrontEndDAO.addGame(this.props.userId, gameName, gameDescription);
+            if (!newGameId) {
+                alert("Failed to create game. Check that your database is running and the tables exist.");
+                return;
+            }
+            this.props.setGameId(newGameId, gameName);
+        } catch (error) {
+            alert("Error creating game: " + (error.message || error));
+        }
     }
 
 

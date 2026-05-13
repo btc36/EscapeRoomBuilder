@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\btc36\\\\Documents\\\\GitHub\\\\EscapeRoomBuilder\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "PowerShell(node --version)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\btc36\\\\Documents\\\\GitHub\\\\EscapeRoomBuilder\" -Depth 1 | Where-Object { $_.PSIsContainer } | Select-Object Name)",
+      "PowerShell(tree \"C:\\\\Users\\\\btc36\\\\Documents\\\\GitHub\\\\EscapeRoomBuilder\" -L 2 -I \"node_modules|build|.git\")",
+      "PowerShell(npm *)",
+      "PowerShell($env:APPDATA)",
+      "Bash(npm --version)",
+      "Bash(Test-Path \"C:\\\\Users\\\\btc36\\\\AppData\\\\Roaming\\\\ASP.NET\\\\https\")",
+      "Bash(Write-Output)",
+      "Bash(Test-Path \"C:\\\\Users\\\\btc36\\\\AppData\\\\Roaming\\\\ASP.NET\")",
+      "PowerShell(nvm list *)",
+      "PowerShell(nvm install *)",
+      "PowerShell(nvm use *)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); node --version 2>&1; npm.cmd --version 2>&1)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\btc36\\\\Documents\\\\GitHub\\\\EscapeRoomBuilder\\\\EscapeRoomApplication\\\\ClientApp\"; npm.cmd install @material-ui/core 2>&1 | Where-Object { $_ -notmatch \"npm warn\" })",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\btc36\\\\Documents\\\\GitHub\\\\EscapeRoomBuilder\\\\EscapeRoomApplication\\\\ClientApp\"; npm.cmd start 2>&1 | Select-Object -First 80)",
+      "PowerShell(netstat *)",
+      "Bash(dotnet --list-runtimes)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet user-secrets *)",
+      "Bash(mysql --version)",
+      "Read(//c/Program Files/**)"
+    ]
+  }
+}

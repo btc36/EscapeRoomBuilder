@@ -15,10 +15,10 @@ namespace EscapeRoomApplication.Controllers
 
         private readonly ILogger<EscapeRoomDAOController> _logger;
 
-        public EscapeRoomDAOController(ILogger<EscapeRoomDAOController> logger)
+        public EscapeRoomDAOController(ILogger<EscapeRoomDAOController> logger, EscapeRoomDAO escapeRoomDAO)
         {
             _logger = logger;
-            EscapeRoomDAO = new EscapeRoomDAO();
+            EscapeRoomDAO = escapeRoomDAO;
         }
 
         [HttpGet]

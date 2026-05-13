@@ -82,6 +82,7 @@ export class FrontEndDAO {
 
     async addGame(userId, name, description) {
         var addGameInfo;
+        var addGameError;
         var parameters = {
             userId: userId,
             name: name,
@@ -92,17 +93,15 @@ export class FrontEndDAO {
             'get',
             null,
             (addGameResponse) => {
-                console.log("TESTING", addGameResponse);
                 addGameInfo = addGameResponse;
             },
             (title, error) => {
-                console.log('Check Version Num Error:', error);
-                //Do we want an error? Without internet, they can't do anything anyway
+                addGameError = error;
             },
-            () => {
-                console.log("Nothing to see here");
-            }
+            () => {}
         );
+        if (addGameError) throw new Error(addGameError);
+        if (!addGameInfo) throw new Error("No response from server");
         return addGameInfo.insertedId;
     }
 

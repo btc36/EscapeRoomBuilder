@@ -20,7 +20,7 @@ export class RunGame extends Component {
           stages: [],
           unlockedLocations: [],
           solvablePuzzles: [],
-          solvedPuzzles: [1,1,1,1,1,1,1,1,1,1],
+          solvedPuzzles: [],
           clueDict: {},
           locationsDict: {},
           locationItems: {},
@@ -92,10 +92,13 @@ export class RunGame extends Component {
                     }
                 }
             }
+            if (!locationInfo) {
+                continue;
+            }
             if (!locationItems[locationInfo.id_props]){
                 locationItems[locationInfo.id_props] = [];
             }
-            locationItems[locationInfo.id_props].push(item.id_items); 
+            locationItems[locationInfo.id_props].push(item.id_items);
             var accessPuzzle = locationInfo.access_puzzle;
             if (accessPuzzle > 0) {
                 continue;
@@ -110,10 +113,10 @@ export class RunGame extends Component {
                 }
                 locationItems[oldParentLocation].push(item.id_items);
                 for (var k in locations) {
-                    var location = locations[j];
-                    if (location.id_props == oldParentLocation) {
-                        hiddenItem = location.access_puzzle;
-                        parentLocation = location.parent_prop;
+                    var parentLoc = locations[k];
+                    if (parentLoc.id_props == oldParentLocation) {
+                        hiddenItem = parentLoc.access_puzzle;
+                        parentLocation = parentLoc.parent_prop;
                         break;
                     }
                 }
@@ -121,7 +124,7 @@ export class RunGame extends Component {
             if (hiddenItem > 0) {
                 continue;
             }
-            backpack.push(item.id_items); 
+            backpack.push(item.id_items);
         }
         for (var i in puzzleItems) {
             var puzzle = puzzleItems[i].puzzle;
@@ -138,6 +141,13 @@ export class RunGame extends Component {
             });
             if (containsAll) {
                 solvablePuzzles.push(puzzleId.toString());
+            }
+        }
+        for (var i in puzzles) {
+            var puzzle = puzzles[i];
+            var pid = puzzle.id_puzzles.toString();
+            if (!puzzleItemsDict[puzzle.id_puzzles] && solvablePuzzles.indexOf(pid) === -1) {
+                solvablePuzzles.push(pid);
             }
         }
         for (var i in clues) {
@@ -393,13 +403,20 @@ export class RunGame extends Component {
         return timeElapsed;
     }
 
-    render() {
-        var percentComplete = (this.state.solvedPuzzles.length / this.state.numPuzzles) * 100;
-        percentComplete = Math.round(percentComplete);
-        if (percentComplete == 100) {
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.solvedPuzzles.length !== this.state.solvedPuzzles.length &&
+            this.state.numPuzzles > 0 &&
+            this.state.solvedPuzzles.length === this.state.numPuzzles) {
             document.getElementById("victory-button").click();
         }
+    }
+
+    render() {
+        var percentComplete = this.state.numPuzzles > 0
+            ? Math.round((this.state.solvedPuzzles.length / this.state.numPuzzles) * 100)
+            : 0;
         var barColor = '#00FF00';
+
         if (percentComplete < 50) {
             barColor = '#AA4A44';
         }

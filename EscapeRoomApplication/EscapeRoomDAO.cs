@@ -6,11 +6,14 @@ namespace EscapeRoomApplication
 {
     public class EscapeRoomDAO
     {
-
+        private readonly string _connectionString;
 
         Dictionary<string, Func<MySqlConnection, DAOParametersObject, DAOResponseObject, DAOResponseObject>> EscapeRoomDAOFunctions;
-        public EscapeRoomDAO()
+        public EscapeRoomDAO(IConfiguration configuration)
         {
+            _connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+
             EscapeRoomDAOFunctions = new Dictionary<string, Func<MySqlConnection,DAOParametersObject, DAOResponseObject, DAOResponseObject>>();
             EscapeRoomDAOFunctions["getUsers"] = this.getUsers;
             EscapeRoomDAOFunctions["getGames"] = this.getGames;
@@ -42,9 +45,7 @@ namespace EscapeRoomApplication
         }
         public MySqlConnection getConnection()
         {
-            string connectionString = "server=127.0.0.1;port=3306;database=escaperoomdb;uid=root;password=cooksben001";
-            MySqlConnection connection = new MySqlConnection(connectionString);
-            return connection;
+            return new MySqlConnection(_connectionString);
         }
 
         public DAOResponseObject MakeDatabaseCall(string methodName, DAOParametersObject parameters)
@@ -86,7 +87,7 @@ namespace EscapeRoomApplication
                     while (reader.Read())
                     {
                         // Access columns by name or index
-                        int userId = reader.GetInt16("id_users");
+                        int userId = reader.GetInt32("id_users");
                         string userName = reader.GetString("username");
                         User user = new User(userId,userName);
                         myResponse.Users.Add(user);
@@ -110,9 +111,9 @@ namespace EscapeRoomApplication
                     while (reader.Read())
                     {
                         // Access columns by name or index
-                        int gameId = reader.GetInt16("id_games");
+                        int gameId = reader.GetInt32("id_games");
                         string name = reader.GetString("name");
-                        int userId = reader.GetInt16("user");
+                        int userId = reader.GetInt32("user");
                         string description = reader.GetString("description");
                         Game game = new Game(gameId, name, description, userId);
                         myResponse.Games.Add(game);
@@ -169,7 +170,7 @@ namespace EscapeRoomApplication
                 // Execute the insert command
 
                 long lastInsertedId = command.LastInsertedId;
-                if(lastInsertedId == null)
+                if (lastInsertedId <= 0)
                 {
                     myResponse.success = false;
                     myResponse.message = "Failure to insert into the table";
@@ -328,7 +329,7 @@ namespace EscapeRoomApplication
                         int puzzle_code_index = reader.GetOrdinal("puzzle_code");
                         if (!reader.IsDBNull(puzzle_code_index))
                         {
-                            puzzle_code = reader.GetString("puzzle_code");
+                            puzzle_code = reader.GetInt32("puzzle_code").ToString();
                         }
                         Puzzle puzzle = new Puzzle(puzzleId,name,description, stageId, lockId, gameId, puzzle_code);
                         myResponse.Puzzles.Add(puzzle);
@@ -361,7 +362,7 @@ namespace EscapeRoomApplication
         public DAOResponseObject addPuzzle(MySqlConnection connection, DAOParametersObject parameters, DAOResponseObject myResponse)
         {
                 // Create a SQL query for the insert statement
-                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5, @value6, @value7)";
+                string sqlQuery = "INSERT INTO puzzles (name, description, stage, lock_solved, game, puzzle_code) VALUES (@value1, @value2, @value3, @value4, @value5, @value6)";
 
                 // Create a MySqlCommand object with the SQL query and connection
                 using (MySqlCommand command = new MySqlCommand(sqlQuery, connection))

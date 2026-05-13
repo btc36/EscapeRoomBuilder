@@ -1,9 +1,5 @@
-﻿import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import React from 'react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
 export class DialogMessage extends React.Component {
 
@@ -12,29 +8,28 @@ export class DialogMessage extends React.Component {
     }
 
     render() {
-        console.log("DIALOG PROPS", this.props);
+        const { isErrorMessage, dialogFullScreen, closeDialog, showDialog,
+                disableEscapeKeyDown, actionDialog, dialogTitle, dialogContent } = this.props;
         return (
-            <Dialog
-                className={this.props.isErrorMessage ? "errorMessage" : ""}
-                dialogFullScreen={this.props.dialogFullScreen}
-                onClose={this.props.closeDialog}
-                aria-labelledby="customized-dialog-title"
-                open={this.props.showDialog}
-                disableEscapeKeyDown={this.props.actionDialog}
-                fullScreen={this.props.dialogFullScreen}
+            <Modal
+                className={`${isErrorMessage ? "errorMessage" : ""} ${dialogFullScreen ? "modal-fullscreen" : ""}`}
+                isOpen={showDialog}
+                toggle={actionDialog ? undefined : () => closeDialog(false)}
+                keyboard={!disableEscapeKeyDown}
+                backdrop={actionDialog ? 'static' : true}
             >
-                <DialogTitle id="customized-dialog-title" onClose={this.props.closeDialog}>
-                    {this.props.dialogTitle}
-        </DialogTitle>
-                <DialogContent dividers>
-                    {this.props.dialogContent}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => { this.props.closeDialog(false)}} color="primary">
-                        {this.props.actionDialog ? 'Cancel' : 'OK'}
+                <ModalHeader toggle={actionDialog ? undefined : () => closeDialog(false)}>
+                    {dialogTitle}
+                </ModalHeader>
+                <ModalBody>
+                    {dialogContent}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={() => closeDialog(false)}>
+                        {actionDialog ? 'Cancel' : 'OK'}
                     </Button>
-                </DialogActions>
-            </Dialog>
+                </ModalFooter>
+            </Modal>
         );
     }
 }
