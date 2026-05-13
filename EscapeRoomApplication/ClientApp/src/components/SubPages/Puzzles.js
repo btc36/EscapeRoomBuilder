@@ -93,6 +93,7 @@ export class Puzzles extends Component {
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
         this.createPuzzleItemsDict = this.createPuzzleItemsDict.bind(this);
+        this.onQuickAdd = this.onQuickAdd.bind(this);
         this.updateClueValue = this.updateClueValue.bind(this);
         this.addClue = this.addClue.bind(this);
         this.getClues = this.getClues.bind(this);
@@ -193,7 +194,6 @@ export class Puzzles extends Component {
     }
 
     addLine() {
-        console.log("ADD LINE STATE", this.state);
         this.setState({
             showDialog: true,
             dialogFullScreen: true,
@@ -204,6 +204,12 @@ export class Puzzles extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Add New Puzzle"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{
+                    puzzleItem: { extraFields: [] },
+                    stage: { extraFields: [] },
+                    lock: { extraFields: [{ name: 'combo', label: 'Combo' }] }
+                }}
             />
         })
     }
@@ -250,6 +256,12 @@ export class Puzzles extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Edit Puzzle"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{
+                    puzzleItem: { extraFields: [] },
+                    stage: { extraFields: [] },
+                    lock: { extraFields: [{ name: 'combo', label: 'Combo' }] }
+                }}
             />
         })
     }
@@ -328,6 +340,58 @@ export class Puzzles extends Component {
             isErrorMessage: false,
             loading: false
         })
+    }
+
+    async onQuickAdd(selectionKey, values) {
+        var editData = this.state.editData;
+        if (selectionKey === 'puzzleItem') {
+            var response = await this.props.FrontEndDAO.addItem({
+                name: values.name, description: values.description,
+                additionalSelections: { location: { value: -1 } }
+            });
+            if (response && response.success) {
+                var items = response.items;
+                editData.additionalSelections.puzzleItem.selectionList = items;
+                var existing = editData.additionalSelections.puzzleItem.value;
+                editData.additionalSelections.puzzleItem.value = existing
+                    ? existing + ',' + response.insertedId
+                    : response.insertedId.toString();
+                this.setState({ items, editData });
+            }
+        } else if (selectionKey === 'stage') {
+            var oldIds = this.state.stages.map(s => s.id_stages);
+            var response = await this.props.FrontEndDAO.addStage({ name: values.name, description: values.description });
+            if (response && response.success) {
+                var stages = response.stages;
+                var newStage = stages.find(s => !oldIds.includes(s.id_stages));
+                editData.additionalSelections.stage.selectionList = stages;
+                if (newStage) {
+                    editData.additionalSelections.stage.value = newStage.id_stages;
+                }
+                this.setState({ stages, editData });
+            }
+        } else if (selectionKey === 'lock') {
+            var oldIds = this.state.locks.map(l => l.id_locks);
+            var response = await this.props.FrontEndDAO.addLock({
+                name: values.name, description: values.description,
+                additionalInputs: { combo: values.combo || '' },
+                additionalSelections: { lockType: { value: null }, location: { value: -1 } }
+            });
+            if (response && response.success) {
+                var locks = response.locks;
+                var newLock = locks.find(l => !oldIds.includes(l.id_locks));
+                editData.additionalSelections.lock.selectionList = locks;
+                if (newLock) {
+                    editData.additionalSelections.lock.value = newLock.id_locks;
+                }
+                this.setState({ locks, editData });
+            }
+        }
+        if (this.state.editing) {
+            setTimeout(this.editLineCallback);
+        } else {
+            setTimeout(this.addLine);
+        }
     }
 
     createPuzzleItemsDict() {

@@ -160,7 +160,7 @@ export default class App extends Component {
                     />
                 )}
             />
-            <Route path='/run-game' component={() => (
+            <Route path='/run-game' render={() => (
                     <RunGame
                         userId={this.state.userId}
                         userName={this.state.userName}

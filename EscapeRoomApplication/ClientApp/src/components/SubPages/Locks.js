@@ -74,6 +74,7 @@ export class Locks extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
+        this.onQuickAdd = this.onQuickAdd.bind(this);
         this.getLocks();
     }
 
@@ -164,8 +165,42 @@ export class Locks extends Component {
         };
     }
 
+    async onQuickAdd(selectionKey, values) {
+        var editData = this.state.editData;
+        if (selectionKey === 'lockType') {
+            var response = await this.props.FrontEndDAO.addLockType({ name: values.name, description: values.description });
+            if (response && response.success) {
+                var lockTypes = response.lockTypes;
+                editData.additionalSelections.lockType.selectionList = lockTypes;
+                if (response.insertedId) {
+                    editData.additionalSelections.lockType.value = response.insertedId;
+                }
+                this.setState({ lockTypes, editData });
+            }
+        } else if (selectionKey === 'location') {
+            var oldIds = this.state.locations.map(l => l.id_props);
+            var response = await this.props.FrontEndDAO.addPropNLocation({
+                name: values.name, description: values.description,
+                additionalSelections: { parent: { value: -1 }, puzzle: { value: -1 } }
+            });
+            if (response && response.success) {
+                var locations = response.propNLocations;
+                var newLoc = locations.find(l => !oldIds.includes(l.id_props));
+                editData.additionalSelections.location.selectionList = locations;
+                if (newLoc) {
+                    editData.additionalSelections.location.value = newLoc.id_props;
+                }
+                this.setState({ locations, editData });
+            }
+        }
+        if (this.state.editing) {
+            setTimeout(this.editLineCallback);
+        } else {
+            setTimeout(this.addLine);
+        }
+    }
+
     addLine() {
-        console.log("ADD LINE STATE", this.state);
         this.setState({
             showDialog: true,
             dialogFullScreen: true,
@@ -176,6 +211,8 @@ export class Locks extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Add New Lock"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ lockType: { extraFields: [] }, location: { extraFields: [] } }}
             />
         })
     }
@@ -223,6 +260,8 @@ export class Locks extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Edit Lock"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ lockType: { extraFields: [] }, location: { extraFields: [] } }}
             />
         })
     }

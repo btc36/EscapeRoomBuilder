@@ -649,6 +649,85 @@ button {
   background: #dc2626 !important;
 }
 
+/* ── Quick-add ──────────────────────────────────── */
+.quick-add-trigger {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.2rem;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--clr-primary) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500;
+  padding: 0.2rem 0 !important;
+  margin-top: 0.35rem !important;
+  width: auto !important;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--transition) !important;
+}
+
+.quick-add-trigger:hover {
+  color: var(--clr-primary-dark) !important;
+  background: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.quick-add-form {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--clr-primary-tint);
+  border: 1.5px solid var(--clr-primary-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quick-add-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--clr-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.quick-add-form input,
+.quick-add-form textarea {
+  font-size: 0.875rem !important;
+  padding: 0.4rem 0.6rem !important;
+}
+
+.quick-add-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.quick-add-actions button {
+  flex: 1;
+  font-size: 0.8125rem !important;
+  padding: 0.4rem 0.75rem !important;
+  width: auto !important;
+  margin-top: 0 !important;
+}
+
+.quick-add-cancel {
+  background: transparent !important;
+  color: var(--clr-text-muted) !important;
+  border: 1.5px solid var(--clr-border) !important;
+  box-shadow: none !important;
+}
+
+.quick-add-cancel:hover {
+  background: var(--clr-bg) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* ── Clues ──────────────────────────────────────── */
 .clueInput {
   width: 100%;

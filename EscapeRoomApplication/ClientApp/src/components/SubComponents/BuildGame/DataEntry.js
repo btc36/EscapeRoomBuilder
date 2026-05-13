@@ -1,84 +1,65 @@
-﻿import React, { Component } from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select'
 
 export class DataEntry extends Component {
 
     constructor(props) {
         super(props)
-        console.log("DATA ENTRY PROPS", props);
+        this.state = {
+            quickAddActive: null,
+            quickAddName: '',
+            quickAddDesc: '',
+            quickAddExtra: {}
+        };
         this.translateDataToSelect = this.translateDataToSelect.bind(this);
         this.translateDataFromSelect = this.translateDataFromSelect.bind(this);
         this.getOptionName = this.getOptionName.bind(this);
         this.getDefaultValue = this.getDefaultValue.bind(this);
+        this.openQuickAdd = this.openQuickAdd.bind(this);
+        this.submitQuickAdd = this.submitQuickAdd.bind(this);
     }
 
     translateDataToSelect(selectionList, selectId, defaultValues, additionalValues, multiSelect) {
-        console.log("selectionList", selectionList);
-        console.log("DEFAULT VALUE", defaultValues);
-        var noneOption = {
-            label: "None",
-            value: null
-        };
         var translatedData = [];
-        if (!multiSelect) {
-            //translatedData.push(noneOption);
-        }
         var selectedValues = [];
         if (defaultValues.length) {
             for (var i in defaultValues) {
                 selectedValues.push(parseInt(defaultValues[i].value));
             }
-        }
-        else {
+        } else {
             selectedValues.push(parseInt(defaultValues.value));
         }
         for (var i in selectionList) {
             var value = selectionList[i][selectId];
-            if (selectedValues.indexOf(value) > -1) {
-                //Dont give selected options as an option
-                continue;
-            }
+            if (selectedValues.indexOf(value) > -1) continue;
             var label = selectionList[i].name;
             if (additionalValues) {
                 for (var j in additionalValues) {
                     label += (" - " + selectionList[i][additionalValues[j]]);
                 }
             }
-            translatedData.push({
-                label: label,
-                value: value
-            })
+            translatedData.push({ label, value });
         }
         return translatedData;
     }
 
-    translateDataFromSelect(e,inputName) {
+    translateDataFromSelect(e, inputName) {
         var inputType = "selection";
         var value = e.value;
         if (e.length) {
-            var values = []
-            for (var i in e) {
-                values.push(e[i].value);
-            }
+            var values = [];
+            for (var i in e) values.push(e[i].value);
             value = values.join();
         }
-        var selectEvent = {
-            target: {
-                value: value
-            }
-        }
-        this.props.updateEditData(selectEvent, inputName, inputType)
+        this.props.updateEditData({ target: { value } }, inputName, inputType);
     }
 
     getOptionName(selectionList, value, selectId) {
-        console.log('GET OPTION NAME', selectionList, value, selectId);
         var name = "N/A";
         for (var i in selectionList) {
             if (selectionList[i][selectId] == value) {
                 name = selectionList[i].name;
-                if(selectionList[i].combo != null) {
-                    name += "-" + selectionList[i].combo
-                }
+                if (selectionList[i].combo != null) name += "-" + selectionList[i].combo;
                 break;
             }
         }
@@ -86,41 +67,43 @@ export class DataEntry extends Component {
     }
 
     getDefaultValue(selectInfo) {
-        console.log("SELECT INFO", selectInfo);
         var valueArray = selectInfo.value ? selectInfo.value.toString().split(",") : [];
-        if (valueArray.length == 1) {
-            var label = "Select Option";
+        if (valueArray.length === 1) {
             if (parseInt(selectInfo.value) > -1) {
                 return {
                     value: selectInfo.value,
                     label: this.getOptionName(selectInfo.selectionList, selectInfo.value, selectInfo.id)
-                }
+                };
+            } else {
+                return [];
             }
-            else {
-                return []
-            }
-            
+        } else {
+            return valueArray.map(v => ({
+                value: v,
+                label: this.getOptionName(selectInfo.selectionList, v, selectInfo.id)
+            }));
         }
-        else {
-            var defaultValuesArray = [];
-            for (var i in valueArray) {
-                var label = this.getOptionName(selectInfo.selectionList, valueArray[i], selectInfo.id)
-                defaultValuesArray.push({
-                    value: valueArray[i],
-                    label: label
-                })
-            }
-            return defaultValuesArray;
+    }
+
+    openQuickAdd(key) {
+        this.setState({ quickAddActive: key, quickAddName: '', quickAddDesc: '', quickAddExtra: {} });
+    }
+
+    submitQuickAdd(key) {
+        const { quickAddName, quickAddDesc, quickAddExtra } = this.state;
+        if (!quickAddName || !quickAddDesc) {
+            alert('Name and description are required');
+            return;
+        }
+        this.setState({ quickAddActive: null, quickAddName: '', quickAddDesc: '', quickAddExtra: {} });
+        if (this.props.onQuickAdd) {
+            this.props.onQuickAdd(key, { name: quickAddName, description: quickAddDesc, ...quickAddExtra });
         }
     }
 
     render() {
-        console.log("EDIT DATA", this.props.editData);
         var editData = this.props.editData;
-        var updateEditDataFunction = this.props.updateEditData;
-        var translateDataToSelectFunction = this.translateDataToSelect;
-        var translateFromSelectFunction = this.translateDataFromSelect;
-        var getDefaultValueFunction = this.getDefaultValue;
+        var quickAddConfig = this.props.quickAddConfig || {};
         var extraInputs = editData.additionalInputs ? Object.keys(editData.additionalInputs) : [];
         var selectOptions = editData.additionalSelections ? Object.keys(editData.additionalSelections) : [];
         return (
@@ -128,46 +111,88 @@ export class DataEntry extends Component {
                 <h1>{this.props.dataEntryTitle}</h1>
                 <label>
                     <b>Name</b>
-                    <input className="nameInput" value={this.props.editData.name} onChange={(e) => { this.props.updateEditData(e, 'name') }} type="text" />
+                    <input className="nameInput" value={editData.name} onChange={e => this.props.updateEditData(e, 'name')} type="text" />
                 </label>
                 <label>
                     <b>Description</b>
-                    <textarea className="descriptionInput" defaultValue={this.props.editData.description} onChange={(e) => { this.props.updateEditData(e, 'description') }} type="text" rows="5" cols="60" name="description"></textarea>
+                    <textarea className="descriptionInput" defaultValue={editData.description} onChange={e => this.props.updateEditData(e, 'description')} rows="5" cols="60" name="description" />
                 </label>
-                {
-                    extraInputs.map(function (extraInput, idx) {    
-                        var inputCapitalized =
-                            extraInput.charAt(0).toUpperCase()
-                            + extraInput.slice(1)
-                        return (
-                            <div>
-                                <b>{inputCapitalized}</b>
-                                <textarea className="additionalInput" value={editData.additionalInputs[extraInput]} onChange={(e) => { updateEditDataFunction(e, extraInput, "extraInput") }} type="text" rows="5" cols="60" name={extraInput}></textarea>
-                            </div>
-                        )
-                    })
-                }
-                {
-                    selectOptions.map(function (selectOption, idx) {
-                        console.log("SELECT OPTION", editData.additionalSelections[selectOption])
-                        var selectionList = editData.additionalSelections[selectOption].selectionList;
-                        var selectId = editData.additionalSelections[selectOption].id;
-                        var selectOptionTitle = editData.additionalSelections[selectOption].title
-                        var defaultValue = getDefaultValueFunction(editData.additionalSelections[selectOption]);
-                        return (
-                                <div className="selectOption">
-                                    <b>{selectOptionTitle}</b>
-                                    <Select
-                                    options={translateDataToSelectFunction(selectionList, selectId, defaultValue, editData.additionalSelections[selectOption].additional_values, editData.additionalSelections[selectOption].multiSelect )}
-                                        touchUi={false}
-                                        onChange={(e, instance) => { translateFromSelectFunction(e, selectOption)}}
-                                        defaultValue={defaultValue}
-                                        isMulti={editData.additionalSelections[selectOption].multiSelect}
-                                    />  
-                                </div>
-                        )
-                    })
-                }
+                {extraInputs.map(extraInput => (
+                    <div key={extraInput}>
+                        <b>{extraInput.charAt(0).toUpperCase() + extraInput.slice(1)}</b>
+                        <textarea
+                            className="additionalInput"
+                            value={editData.additionalInputs[extraInput]}
+                            onChange={e => this.props.updateEditData(e, extraInput, "extraInput")}
+                            rows="5" cols="60" name={extraInput}
+                        />
+                    </div>
+                ))}
+                {selectOptions.map(selectOption => {
+                    var selectionInfo = editData.additionalSelections[selectOption];
+                    var defaultValue = this.getDefaultValue(selectionInfo);
+                    var qaConfig = quickAddConfig[selectOption];
+                    var isQAActive = this.state.quickAddActive === selectOption;
+                    return (
+                        <div className="selectOption" key={selectOption}>
+                            <b>{selectionInfo.title}</b>
+                            <Select
+                                options={this.translateDataToSelect(
+                                    selectionInfo.selectionList,
+                                    selectionInfo.id,
+                                    defaultValue,
+                                    selectionInfo.additional_values,
+                                    selectionInfo.multiSelect
+                                )}
+                                touchUi={false}
+                                onChange={e => this.translateDataFromSelect(e, selectOption)}
+                                value={defaultValue}
+                                isMulti={selectionInfo.multiSelect}
+                            />
+                            {qaConfig && (
+                                isQAActive ? (
+                                    <div className="quick-add-form">
+                                        <p className="quick-add-label">New {selectionInfo.title}</p>
+                                        <input
+                                            autoFocus
+                                            placeholder="Name"
+                                            value={this.state.quickAddName}
+                                            onChange={e => this.setState({ quickAddName: e.target.value })}
+                                        />
+                                        <textarea
+                                            placeholder="Description"
+                                            value={this.state.quickAddDesc}
+                                            onChange={e => this.setState({ quickAddDesc: e.target.value })}
+                                            rows="2"
+                                        />
+                                        {(qaConfig.extraFields || []).map(field => (
+                                            <input
+                                                key={field.name}
+                                                placeholder={field.label}
+                                                value={this.state.quickAddExtra[field.name] || ''}
+                                                onChange={e => this.setState({
+                                                    quickAddExtra: { ...this.state.quickAddExtra, [field.name]: e.target.value }
+                                                })}
+                                            />
+                                        ))}
+                                        <div className="quick-add-actions">
+                                            <button type="button" onClick={() => this.submitQuickAdd(selectOption)}>
+                                                + Add {selectionInfo.title}
+                                            </button>
+                                            <button type="button" className="quick-add-cancel" onClick={() => this.setState({ quickAddActive: null })}>
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button type="button" className="quick-add-trigger" onClick={() => this.openQuickAdd(selectOption)}>
+                                        + New {selectionInfo.title}
+                                    </button>
+                                )
+                            )}
+                        </div>
+                    );
+                })}
                 <button onClick={this.props.submitLineEntry}>Submit</button>
             </div>
         );

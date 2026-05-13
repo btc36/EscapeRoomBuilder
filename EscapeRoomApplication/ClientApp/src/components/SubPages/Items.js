@@ -58,6 +58,7 @@ export class Items extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
+        this.onQuickAdd = this.onQuickAdd.bind(this);
         this.getItems();
     }
 
@@ -146,8 +147,32 @@ export class Items extends Component {
         };
     }
 
+    async onQuickAdd(selectionKey, values) {
+        var editData = this.state.editData;
+        if (selectionKey === 'location') {
+            var oldIds = this.state.locations.map(l => l.id_props);
+            var response = await this.props.FrontEndDAO.addPropNLocation({
+                name: values.name, description: values.description,
+                additionalSelections: { parent: { value: -1 }, puzzle: { value: -1 } }
+            });
+            if (response && response.success) {
+                var locations = response.propNLocations;
+                var newLoc = locations.find(l => !oldIds.includes(l.id_props));
+                editData.additionalSelections.location.selectionList = locations;
+                if (newLoc) {
+                    editData.additionalSelections.location.value = newLoc.id_props;
+                }
+                this.setState({ locations, editData });
+            }
+        }
+        if (this.state.editing) {
+            setTimeout(this.editLineCallback);
+        } else {
+            setTimeout(this.addLine);
+        }
+    }
+
     addLine() {
-        console.log("ADD LINE STATE", this.state);
         this.setState({
             showDialog: true,
             dialogFullScreen: true,
@@ -158,6 +183,8 @@ export class Items extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Add New Item"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ location: { extraFields: [] } }}
             />
         })
     }
@@ -204,6 +231,8 @@ export class Items extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Edit Item"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ location: { extraFields: [] } }}
             />
         })
     }

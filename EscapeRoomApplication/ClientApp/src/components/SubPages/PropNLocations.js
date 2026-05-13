@@ -70,6 +70,7 @@ export class PropNLocations extends Component {
         this.editLineCallback = this.editLineCallback.bind(this);
         this.submitLineEntry = this.submitLineEntry.bind(this);
         this.submitLineEntryCallback = this.submitLineEntryCallback.bind(this);
+        this.onQuickAdd = this.onQuickAdd.bind(this);
         this.getPropNLocations();
     }
 
@@ -159,8 +160,47 @@ export class PropNLocations extends Component {
         };
     }
 
+    async onQuickAdd(selectionKey, values) {
+        var editData = this.state.editData;
+        if (selectionKey === 'puzzle') {
+            var oldIds = this.state.puzzles.map(p => p.id_puzzles);
+            var response = await this.props.FrontEndDAO.addPuzzle({
+                name: values.name, description: values.description,
+                additionalSelections: { lock: { value: -1 }, stage: { value: -1 }, puzzleItem: { value: null } }
+            });
+            if (response && response.success) {
+                var puzzles = response.puzzles;
+                var newPuzzle = puzzles.find(p => !oldIds.includes(p.id_puzzles));
+                editData.additionalSelections.puzzle.selectionList = puzzles;
+                if (newPuzzle) {
+                    editData.additionalSelections.puzzle.value = newPuzzle.id_puzzles;
+                }
+                this.setState({ puzzles, editData });
+            }
+        } else if (selectionKey === 'parent') {
+            var oldIds = this.state.propNLocations.map(p => p.id_props);
+            var response = await this.props.FrontEndDAO.addPropNLocation({
+                name: values.name, description: values.description,
+                additionalSelections: { parent: { value: -1 }, puzzle: { value: -1 } }
+            });
+            if (response && response.success) {
+                var propNLocations = response.propNLocations;
+                var newProp = propNLocations.find(p => !oldIds.includes(p.id_props));
+                editData.additionalSelections.parent.selectionList = propNLocations;
+                if (newProp) {
+                    editData.additionalSelections.parent.value = newProp.id_props;
+                }
+                this.setState({ propNLocations, editData });
+            }
+        }
+        if (this.state.editing) {
+            setTimeout(this.editLineCallback);
+        } else {
+            setTimeout(this.addLine);
+        }
+    }
+
     addLine() {
-        console.log("ADD LINE STATE", this.state);
         this.setState({
             showDialog: true,
             dialogFullScreen: true,
@@ -171,6 +211,8 @@ export class PropNLocations extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Add New Prop"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ puzzle: { extraFields: [] }, parent: { extraFields: [] } }}
             />
         })
     }
@@ -217,6 +259,8 @@ export class PropNLocations extends Component {
                 updateEditData={this.updateEditData}
                 submitLineEntry={this.submitLineEntry}
                 dataEntryTitle="Edit Prop"
+                onQuickAdd={this.onQuickAdd}
+                quickAddConfig={{ puzzle: { extraFields: [] }, parent: { extraFields: [] } }}
             />
         })
     }
