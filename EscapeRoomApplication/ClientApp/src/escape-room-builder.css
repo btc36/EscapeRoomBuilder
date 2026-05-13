@@ -1,269 +1,584 @@
-/* Use a single css file so that formatting is consitent throughout. Makes classes reusable*/
+/* ═══════════════════════════════════════════════════
+   Escape Room Builder — Design System
+   ═══════════════════════════════════════════════════ */
 
+/* ── Custom Properties ──────────────────────────── */
+:root {
+  --clr-primary:       #6366f1;
+  --clr-primary-dark:  #4f46e5;
+  --clr-primary-light: #818cf8;
+  --clr-primary-tint:  #ede9fe;
 
-.pageLink {
-    align-self: center;
-    background-color: #fff;
-    background-image: none;
-    background-position: 0 90%;
-    background-repeat: repeat no-repeat;
-    background-size: 4px 3px;
-    border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
-    border-style: solid;
-    border-width: 2px;
-    box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
-    box-sizing: border-box;
-    color: #41403e;
-    cursor: pointer;
-    display: inline-block;
-    font-family: Neucha, sans-serif;
-    font-size: 1rem;
-    line-height: 23px;
-    outline: none;
-    padding: .75rem;
-    text-decoration: none;
-    transition: all 235ms ease-in-out;
-    border-bottom-left-radius: 15px 255px;
-    border-bottom-right-radius: 225px 15px;
-    border-top-left-radius: 255px 15px;
-    border-top-right-radius: 15px 225px;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    width: 100%;
-    text-align: center;
+  --clr-bg:      #f1f5f9;
+  --clr-surface: #ffffff;
+  --clr-border:  #e2e8f0;
+
+  --clr-text:       #0f172a;
+  --clr-text-muted: #64748b;
+
+  --clr-success: #10b981;
+  --clr-danger:  #ef4444;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+
+  --transition: 0.18s ease;
 }
 
-.pageLink:focus {
-    box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+/* ── Reset / Base ───────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-.pageLink:hover {
-    box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
-    transform: translate3d(0, 2px, 0);
+h1, h2, h3, h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 0;
 }
 
-
-h1 {
-    font-size: 40px;
+/* ── App Shell ──────────────────────────────────── */
+.layout {
+  min-height: 100vh;
+  background: var(--clr-bg);
 }
 
 .mainPage {
-    background-color: darkblue;
+  background-color: var(--clr-bg);
 }
 
-.layout {
+/* ── Navbar ─────────────────────────────────────── */
+.app-navbar {
+  background: var(--clr-surface);
+  border-bottom: 1px solid var(--clr-border);
+  box-shadow: var(--shadow-sm);
+  padding: 0 1.75rem;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
 }
 
-.selected {
-    background-color: pink !important;
+.app-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  text-decoration: none;
 }
 
-.dataEntry {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    padding: 10px 50px 10px 50px;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
-    font-size: 25px;
-    background-color: lightgreen;
+.app-navbar-brand .game-name {
+  color: var(--clr-text-muted);
+  font-weight: 400;
+  font-size: 0.875rem;
+  margin-left: 0.25rem;
 }
 
-.dataEntry input {
-    width: 100%;
-    margin-bottom: 5px;
+.app-navbar-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--clr-primary);
+  color: #fff !important;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none !important;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
 }
 
-.dataEntry button {
-    width: 100%;
-    margin-top:20px;
+.app-navbar-home:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
-.addClue {
-    display: flex;
-    flex-direction: column;
+/* ── Page Wrapper ───────────────────────────────── */
+.app-main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
 }
 
-.clueInput {
-    width: 1000px;
-}
-
-.additionalInput {
-
-}
-
-.selectOption {
-
-}
-
-.escapeRoomPage {
-    text-align: center;
-}
-
-.escapeRoomPage button {
-    align-items: center;
-    appearance: none;
-    background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
-    border: 0;
-    border-radius: 6px;
-    box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-flex;
-    font-family: "JetBrains Mono",monospace;
-    height: 48px;
-    justify-content: center;
-    line-height: 1;
-    list-style: none;
-    overflow: hidden;
-    padding-left: 16px; 
-    padding-right: 16px;
-    position: relative;
-    text-align: left;
-    text-decoration: none;
-    transition: box-shadow .15s,transform .15s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    white-space: nowrap;
-    will-change: box-shadow,transform;
-    font-size: 18px;
-}
-
-.escapeRoomPage button {
-    box-shadow: #3c4fe0 0 0 0 1.5px inset, rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
-}
-
-.escapeRoomPage button {
-    box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
-    transform: translateY(-2px);
-}
-
-.escapeRoomPage button {
-    box-shadow: #3c4fe0 0 3px 7px inset;
-    transform: translateY(2px);
-}
-
+/* ── Page Title ─────────────────────────────────── */
 .pageTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-bottom: 1.25rem;
 }
 
-.backButton {
+/* ── Home Page ──────────────────────────────────── */
+.mainPageLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 58px);
+  gap: 0;
+  padding: 2rem;
+}
 
+.home-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.home-hero h1 {
+  font-size: 2.8rem;
+  color: var(--clr-text);
+  margin-bottom: 0.6rem;
+}
+
+.home-hero p {
+  color: var(--clr-text-muted);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.home-cards {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 3rem;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  text-decoration: none !important;
+  color: var(--clr-text) !important;
+  min-width: 220px;
+}
+
+.home-card:hover {
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  color: var(--clr-primary) !important;
+}
+
+.home-card-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.home-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Build Game Menu ────────────────────────────── */
+.buildGameMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.buildGameMenu h1 {
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+}
+
+.build-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 680px;
+}
+
+.build-menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
+  text-decoration: none !important;
+  color: var(--clr-text) !important;
+}
+
+.build-menu-card:hover {
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  color: var(--clr-primary) !important;
+}
+
+.build-menu-card-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.build-menu-card span:last-child {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* ── Create New Game ────────────────────────────── */
+.createNewGame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 58px);
+  padding: 2rem;
+}
+
+.createNewGame-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--clr-border);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.createNewGame-card h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Forms ──────────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label,
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--clr-text);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea,
+.puzzleCode {
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--clr-text);
+  background: var(--clr-surface);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+.puzzleCode:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* ── Buttons ────────────────────────────────────── */
+button {
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+/* All page-level buttons */
+.escapeRoomPage button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  height: auto;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  overflow: visible;
+  background-image: none;
+}
+
+.escapeRoomPage button:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.escapeRoomPage button:active {
+  transform: translateY(0);
 }
 
 .addNewButton {
+  padding: 0.6rem 1.25rem !important;
+  font-size: 0.9375rem !important;
+  margin-bottom: 0.75rem;
+}
 
+/* Create/submit buttons */
+.createNewGame-card button,
+.dataEntry > button,
+.runGamePage button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.createNewGame-card button:hover,
+.dataEntry > button:hover,
+.runGamePage button:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Page Link ──────────────────────────────────── */
+.pageLink {
+  display: inline-block;
+  width: 100%;
+}
+
+.pageLink a,
+.pageLink .nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit !important;
+  text-decoration: none !important;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0;
+  width: 100%;
+}
+
+/* ── Data Tables ────────────────────────────────── */
+.escapeRoomPage {
+  text-align: left;
 }
 
 .escapeRoomPageTable {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: .9em;
-    font-family: sans-serif;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    text-align: left;
-    display: block;
-    max-height: 500px;
-    overflow-y: scroll;
-    white-space: nowrap;
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--clr-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--clr-border);
+  margin: 0.5rem 0 1.5rem;
+  display: block;
+  max-height: 540px;
+  overflow-y: auto;
+  white-space: nowrap;
+  font-size: 0.875rem;
 }
-
 
 .escapeRoomPageTable thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
+  background: var(--clr-primary);
+  color: #fff;
+  text-align: left;
 }
-
-.sticky {
-    position: fixed;
-    top: 0;
-    width: 100%
-}
-
 
 .escapeRoomPageTable th,
 .escapeRoomPageTable td {
-    padding: 12px 15px;
+  padding: 0.7rem 1rem;
 }
 
 .escapeRoomPageTable td:last-child {
-    width: 100%;
+  width: 100%;
 }
 
 .escapeRoomPageTable tbody tr {
-    border-bottom: 1px solid;
+  border-bottom: 1px solid var(--clr-border);
+  transition: background var(--transition);
 }
 
-
 .escapeRoomPageTable tbody tr:nth-of-type(even) {
-    background-color: deepskyblue;
+  background-color: #f8fafc;
 }
 
 .escapeRoomPageTable tbody tr:nth-of-type(odd) {
-    background-color: cornflowerblue;
+  background-color: var(--clr-surface);
+}
+
+.escapeRoomPageTable tbody tr:hover {
+  background-color: var(--clr-primary-tint) !important;
 }
 
 .escapeRoomPageTable tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+  border-bottom: none;
 }
 
-.buildGameMenu {
-    position: absolute;
-    left: 50%;
-    top: 30%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    font-size: 50px;
-    text-align: center;
-    width:100%;
+/* ── Selected State ─────────────────────────────── */
+.selected {
+  background-color: var(--clr-primary-tint) !important;
+  color: var(--clr-primary-dark);
+  font-weight: 500;
 }
 
-.createNewGame {
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
+/* ── Data Entry (modal form) ────────────────────── */
+.dataEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.25rem;
+  font-size: 0.9375rem;
+  background: transparent;
+  text-align: left;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
 }
 
-.createNewGame p {
-    font-size: 20px;
+.dataEntry h1 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
 }
 
-.createNewGame input {
-    width: 100%;
-    margin-bottom: 5px;
+.dataEntry label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 500;
+  font-size: 0.875rem;
 }
 
-
-.mainPageLinks {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    font-size: 50px;
+.dataEntry input,
+.dataEntry textarea {
+  margin-bottom: 0;
+  width: 100%;
 }
 
+.dataEntry button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
 
-.countdown, .victory-text {
-    font-size: 300px;
+.selectOption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.selectOption b {
+  font-size: 0.875rem;
+}
+
+/* ── Run Game Page ──────────────────────────────── */
+.runGamePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem;
+  gap: 1.5rem;
+  min-height: calc(100vh - 58px);
+}
+
+.countdown {
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.victory-text {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  letter-spacing: -0.03em;
+  margin: 0;
 }
 
 .timeelapsed {
-    font-size: 80px;
+  font-size: 1.4rem;
+  color: var(--clr-text-muted);
+  font-weight: 500;
 }
 
-.runGamePage {
-    text-align: center;
+.run-game-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.puzzleCode {
+  width: 200px;
+  padding: 0.6rem 0.875rem;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+/* ── Clues ──────────────────────────────────────── */
+.clueInput {
+  width: 100%;
+  max-width: 700px;
+}
+
+.addClue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Misc ───────────────────────────────────────── */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }

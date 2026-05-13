@@ -1,29 +1,33 @@
 import React, { Component } from 'react';
-import { PageLink } from './SubComponents/PageLink';
+import { Link } from 'react-router-dom';
 
 export class Home extends Component {
-    static displayName = Home.name;
+  static displayName = Home.name;
 
-    constructor(props) {
-        super(props);
-        if (this.props.gameId) {
-            this.props.setGameId("")
-        }
+  constructor(props) {
+    super(props);
+    if (this.props.gameId) {
+      this.props.setGameId('');
     }
+  }
 
-  render () {
+  render() {
     return (
-        <div className="mainPageLinks">
-            <PageLink
-                linkURL={"build-game"}
-                linkText={"Create a New Game"}
-            />
-            <br/>
-            <PageLink
-                linkURL={"games"}
-                linkText={"See Existing Games"}
-            />
-           
+      <div className="mainPageLinks">
+        <div className="home-hero">
+          <h1>🔐 Escape Room Builder</h1>
+          <p>Design, build, and run your own escape room experiences.</p>
+        </div>
+        <div className="home-cards">
+          <Link to="/build-game" className="home-card">
+            <div className="home-card-icon">🏗️</div>
+            <h3>Create a New Game</h3>
+          </Link>
+          <Link to="/games" className="home-card">
+            <div className="home-card-icon">🎮</div>
+            <h3>See Existing Games</h3>
+          </Link>
+        </div>
       </div>
     );
   }

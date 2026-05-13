@@ -1,43 +1,29 @@
-﻿import React, { Component } from 'react';
-import { PageLink } from '../PageLink';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
+const menuItems = [
+  { url: 'stages',    label: 'Stages',          icon: '📋' },
+  { url: 'puzzles',   label: 'Puzzles',          icon: '🧩' },
+  { url: 'items',     label: 'Items',            icon: '🎒' },
+  { url: 'props',     label: 'Props / Locations',icon: '📍' },
+  { url: 'locks',     label: 'Locks',            icon: '🔒' },
+  { url: 'lockTypes', label: 'Lock Types',       icon: '🗝️' },
+];
 
 export class BuildGameMenu extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
-    render() {
-        return (
-            <div className="buildGameMenu">
-                <h1>BUILD GAME MENU</h1>
-                <div>
-                    <button onClick={this.editGame}> <PageLink
-                        linkURL={"stages"}
-                        linkText={"Stages"}
-                    /></button>
-                    <button> <PageLink
-                        linkURL={"puzzles"}
-                        linkText={"Puzzles"}
-                    /></button>
-                    <button> <PageLink
-                        linkURL={"items"}
-                        linkText={"Items"}
-                    /></button>
-                    <button> <PageLink
-                        linkURL={"props"}
-                        linkText={"Props/Locations"}
-                    /></button>
-                    <button> <PageLink
-                        linkURL={"locks"}
-                        linkText={"Locks"}
-                    /></button>
-                    <button> <PageLink
-                        linkURL={"lockTypes"}
-                        linkText={"Lock Types"}
-                    /></button>
-                </div>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="buildGameMenu">
+        <h1>Build Game</h1>
+        <div className="build-menu-grid">
+          {menuItems.map(item => (
+            <Link key={item.url} to={'/' + item.url} className="build-menu-card">
+              <span className="build-menu-card-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
 }

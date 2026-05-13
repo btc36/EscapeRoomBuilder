@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
-import { PageLink } from './SubComponents/PageLink';
+import { Link } from 'react-router-dom';
 
 export class Layout extends Component {
   static displayName = Layout.name;
 
-  render () {
+  render() {
     return (
       <div className="layout">
-            <h1>Escape Room Builder - {this.props.gameName}</h1>
-            {
-                !this.props.runningGame
-                &&
-                <PageLink
-                    linkURL={""}
-                    linkText={"Home"}
-                />
-            }
-            <Container>
-              {this.props.children}
-            </Container>
+        <nav className="app-navbar">
+          <div className="app-navbar-brand">
+            🔐 Escape Room Builder
+            {this.props.gameName && (
+              <span className="game-name">— {this.props.gameName}</span>
+            )}
+          </div>
+          {!this.props.runningGame && (
+            <Link to="/" className="app-navbar-home">
+              ⌂ Home
+            </Link>
+          )}
+        </nav>
+        <div className="app-main">
+          {this.props.children}
+        </div>
       </div>
     );
   }

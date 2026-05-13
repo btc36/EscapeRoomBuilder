@@ -453,23 +453,31 @@ export class RunGame extends Component {
             <ProgressBar
                 completed={percentComplete}
                 bgColor={barColor}
-                height={"30px"}
+                height={"12px"}
+                borderRadius={"6px"}
+                isLabelVisible={false}
+                style={{ width: '100%', maxWidth: '600px' }}
             />
-            <br /><br />
             {
                 this.props.countdown == "01:00:00"
                 &&
-                <button onClick={this.startTimer}>Start Timer</button>
+                <button onClick={this.startTimer}>▶ Start Timer</button>
             }
             {
                 percentComplete < 100
                 &&
-                <div>
-                    <button onClick={this.getClue}>Get Clue</button>
-                    <input className="puzzleCode" value={this.state.puzzleCode} onChange={(e) => { this.updatePuzzleCode(e) }} type="text" />
-                    <button onClick={this.submitPuzzleCode}>Submit Code</button>
+                <div className="run-game-controls">
+                    <button onClick={this.getClue}>💡 Get Clue</button>
+                    <input
+                        className="puzzleCode"
+                        value={this.state.puzzleCode}
+                        onChange={(e) => { this.updatePuzzleCode(e) }}
+                        type="text"
+                        placeholder="Enter code..."
+                    />
+                    <button onClick={this.submitPuzzleCode}>Submit</button>
                 </div>
-                }
+            }
             <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
       </div>
     );
