@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import Countdown from 'react-countdown';
 import ProgressBar from "@ramonak/react-progress-bar";
 import { Audio } from './Widgets/Audio';
@@ -39,7 +40,8 @@ export class RunGame extends Component {
           isErrorMessage: false,
           dialogFullScreen: false,
           adminStep: null,
-          adminPassword: ''
+          adminPassword: '',
+          redirectHome: false
       };
       if (!this.props.runningGame) {
           this.props.startRunningGame();
@@ -62,6 +64,8 @@ export class RunGame extends Component {
       this.closeAdmin = this.closeAdmin.bind(this);
       this.adminEndGame = this.adminEndGame.bind(this);
       this.adminAddTime = this.adminAddTime.bind(this);
+      this.adminResetGame = this.adminResetGame.bind(this);
+      this.adminGoHome = this.adminGoHome.bind(this);
       this.getFullGameInfo();
     }
 
@@ -350,7 +354,7 @@ export class RunGame extends Component {
         this.makeConfetti();
         this.makeConfetti();
         this.makeConfetti();
-        setTimeout(() => { document.getElementById("victory-button").click()},2000);
+        this.confettiTimeout = setTimeout(() => { document.getElementById("victory-button").click()},2000);
     }
 
     playFailure() {
@@ -442,6 +446,26 @@ export class RunGame extends Component {
         this.props.addTime(minutes);
     }
 
+    adminResetGame() {
+        this.props.resetTimer();
+        this.setState({
+            solvedPuzzles: [],
+            givenClues: [],
+            puzzleCode: "",
+            currentStage: "",
+            adminStep: null,
+            adminPassword: ''
+        });
+        this.getFullGameInfo();
+    }
+
+    adminGoHome() {
+        clearTimeout(this.confettiTimeout);
+        confetti.reset();
+        this.props.stopRunningGame();
+        this.setState({ redirectHome: true, adminStep: null, adminPassword: '' });
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (prevState.solvedPuzzles.length !== this.state.solvedPuzzles.length &&
             this.state.numPuzzles > 0 &&
@@ -461,6 +485,9 @@ export class RunGame extends Component {
         }
         else if (percentComplete < 80) {
             barColor = '#FBCEB1';
+        }
+        if (this.state.redirectHome) {
+            return <Redirect to="/" />;
         }
         var timeElapsed = this.getTimeElapsed(this.props.startTime);
         return (
@@ -506,15 +533,17 @@ export class RunGame extends Component {
                 percentComplete < 100
                 &&
                 <div className="run-game-controls">
-                    <button onClick={this.getClue}>💡 Get Clue</button>
-                    <input
-                        className="puzzleCode"
-                        value={this.state.puzzleCode}
-                        onChange={(e) => { this.updatePuzzleCode(e) }}
-                        type="text"
-                        placeholder="Enter code..."
-                    />
-                    <button onClick={this.submitPuzzleCode}>Submit</button>
+                    <button className="clue-btn" onClick={this.getClue}>💡 Get Clue</button>
+                    <div className="run-game-code-row">
+                        <input
+                            className="puzzleCode"
+                            value={this.state.puzzleCode}
+                            onChange={(e) => { this.updatePuzzleCode(e) }}
+                            type="text"
+                            placeholder="Enter code..."
+                        />
+                        <button onClick={this.submitPuzzleCode}>Submit</button>
+                    </div>
                 </div>
             }
             <button id="victory-button" onClick={this.startVictory} hidden>VICTORY</button>
@@ -558,6 +587,8 @@ export class RunGame extends Component {
                                 disabled={!this.props.timerStarted}
                             >+ 10 Minutes</button>
                             <button className="admin-danger-btn" onClick={this.adminEndGame}>End Game</button>
+                            <button className="admin-warning-btn" onClick={this.adminResetGame}>Reset Game</button>
+                            <button className="admin-cancel-btn" onClick={this.adminGoHome}>Back to Main</button>
                             <button className="admin-cancel-btn" onClick={this.closeAdmin}>Close</button>
                         </div>
                     </div>

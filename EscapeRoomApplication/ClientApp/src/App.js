@@ -34,8 +34,10 @@ export default class App extends Component {
             startTime: null
         };
         this.startRunningGame = this.startRunningGame.bind(this);
+        this.stopRunningGame = this.stopRunningGame.bind(this);
         this.startTimer = this.startTimer.bind(this);
         this.addTime = this.addTime.bind(this);
+        this.resetTimer = this.resetTimer.bind(this);
         this.setGameId = this.setGameId.bind(this);
         this.makeRESTCall = this.makeRESTCall.bind(this);
         this.FrontEndDAO = new FrontEndDAO(this.makeRESTCall, this.state.userId, this.state.gameId);  
@@ -43,9 +45,15 @@ export default class App extends Component {
 
 
     startRunningGame() {
-        this.setState({
-            runningGame: true
-        });
+        this.setState({ runningGame: true });
+    }
+
+    stopRunningGame() {
+        this.setState({ runningGame: false, timerEnd: null, startTime: null });
+    }
+
+    resetTimer() {
+        this.setState({ timerEnd: null, startTime: null });
     }
 
     startTimer() {
@@ -174,6 +182,8 @@ export default class App extends Component {
                         startTime={this.state.startTime}
                         timerStarted={!!timerEnd}
                         addTime={this.addTime}
+                        resetTimer={this.resetTimer}
+                        stopRunningGame={this.stopRunningGame}
                     />
                 )}
             />

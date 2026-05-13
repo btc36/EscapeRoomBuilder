@@ -649,6 +649,14 @@ button {
   background: #dc2626 !important;
 }
 
+.admin-warning-btn {
+  background: #f59e0b !important;
+}
+
+.admin-warning-btn:hover {
+  background: #d97706 !important;
+}
+
 /* ── Quick-add ──────────────────────────────────── */
 .quick-add-trigger {
   display: inline-flex !important;
@@ -740,9 +748,137 @@ button {
   gap: 0.75rem;
 }
 
+/* ── Run Game Code Row ──────────────────────────── */
+.run-game-code-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.run-game-code-row .puzzleCode {
+  flex: 1;
+  width: auto;
+}
+
 /* ── Misc ───────────────────────────────────────── */
 .sticky {
   position: sticky;
   top: 0;
   z-index: 50;
+}
+
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .app-navbar {
+    padding: 0 1rem;
+  }
+
+  .app-navbar-brand {
+    font-size: 0.9rem;
+  }
+
+  /* Page wrapper */
+  .app-main {
+    padding: 1rem;
+  }
+
+  /* Home hero */
+  .home-hero h1 {
+    font-size: 2rem;
+  }
+
+  .home-card {
+    min-width: 0;
+    width: 100%;
+    max-width: 340px;
+    padding: 1.5rem 1.25rem;
+  }
+
+  /* Build menu: 2 columns */
+  .build-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Tables: allow horizontal scroll */
+  .escapeRoomPageTable {
+    overflow: auto;
+    max-height: 55vh;
+  }
+
+  /* Larger touch targets for table action buttons */
+  .escapeRoomPage button {
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Run game */
+  .countdown {
+    font-size: 4rem;
+  }
+
+  .run-game-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .clue-btn {
+    width: 100%;
+  }
+
+  .run-game-code-row {
+    gap: 0.5rem;
+  }
+
+  .puzzleCode {
+    width: auto;
+  }
+
+  /* Admin panel */
+  .admin-panel {
+    max-width: calc(100vw - 2rem);
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .home-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .home-hero p {
+    font-size: 0.95rem;
+  }
+
+  .home-cards {
+    gap: 0.75rem;
+  }
+
+  .countdown {
+    font-size: 3.2rem;
+  }
+
+  .victory-text {
+    font-size: 2.5rem;
+  }
+
+  /* Single column build menu on very small screens */
+  .build-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+  }
+
+  /* DataEntry modal form tweaks */
+  .dataEntry {
+    padding: 0;
+  }
+
+  /* Navbar: hide game name to save space */
+  .app-navbar-brand .game-name {
+    display: none;
+  }
 }
